@@ -19,7 +19,6 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
 #wrap{height:100vh;display:flex;flex-direction:column;position:relative}
 #map{flex:1;min-height:0;width:100%}
 
-/* TOP BAR */
 #top{position:absolute;top:0;left:0;right:0;z-index:500;padding:12px 14px 10px;
   background:linear-gradient(180deg,rgba(9,9,15,.96) 55%,transparent);pointer-events:none}
 #top>*{pointer-events:auto}
@@ -30,14 +29,7 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
   font-size:15px;flex-shrink:0;box-shadow:0 0 16px rgba(124,106,247,.35)}
 .logo-text{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.3px}
 .logo-sub{font-size:9px;color:var(--text2);margin-top:1px}
-.donate-top-btn{
-  margin-left:auto;display:flex;align-items:center;gap:5px;
-  background:linear-gradient(135deg,#f59e0b,#d97706);
-  border:none;border-radius:18px;padding:6px 13px;cursor:pointer;
-  font-family:'IBM Plex Sans Thai',sans-serif;font-size:11px;font-weight:700;
-  color:#fff;box-shadow:0 3px 12px rgba(245,158,11,.4);flex-shrink:0}
 
-/* FILTER PILLS */
 #pills{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
 #pills::-webkit-scrollbar{display:none}
 .pl{border:1px solid var(--border2);cursor:pointer;padding:5px 12px;border-radius:20px;
@@ -46,7 +38,6 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
   transition:all .18s;white-space:nowrap;flex-shrink:0}
 .pl.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 12px rgba(124,106,247,.4)}
 
-/* STATS */
 #sbar{background:var(--surface);border-top:1px solid var(--border);
   display:grid;grid-template-columns:repeat(4,1fr);flex-shrink:0}
 .sc{padding:9px 4px;text-align:center;border-right:1px solid var(--border)}
@@ -54,7 +45,6 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
 .sn{font-family:'Space Mono',monospace;font-size:17px;font-weight:700;line-height:1}
 .sl{font-size:9px;color:var(--text2);margin-top:3px;font-weight:500;letter-spacing:.3px;text-transform:uppercase}
 
-/* NAV */
 #bnav{background:var(--surface);border-top:1px solid var(--border);
   display:flex;align-items:center;flex-shrink:0;height:58px;
   padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -72,7 +62,6 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
   box-shadow:0 4px 16px rgba(124,106,247,.45);position:relative;top:-9px;
   border:1px solid rgba(255,255,255,.12)}
 
-/* OVERLAYS */
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;
   align-items:flex-end;backdrop-filter:blur(2px)}
 .ov.on{display:flex}
@@ -82,7 +71,6 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
 .hdl{width:32px;height:3px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
 .sht{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px}
 
-/* POPUP */
 .leaflet-popup-content-wrapper{border-radius:16px!important;
   box-shadow:0 8px 32px rgba(0,0,0,.5)!important;padding:0!important;overflow:hidden;
   background:var(--surface2)!important;border:1px solid var(--border2)!important}
@@ -108,7 +96,6 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
   border:none;cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;
   text-decoration:none;display:inline-block;transition:.15s}
 
-/* FORM */
 .ig{margin-bottom:13px}
 .il{font-size:11px;color:var(--text2);display:block;margin-bottom:5px;
   font-weight:600;letter-spacing:.3px;text-transform:uppercase}
@@ -117,16 +104,12 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
   font-size:14px;outline:none;transition:border-color .15s}
 .inp:focus{border-color:var(--accent)}
 select.inp option{background:var(--surface2)}
-textarea.inp{resize:vertical;min-height:80px}
 .btn{background:linear-gradient(135deg,var(--accent),#4a3fc0);color:white;border:none;
   cursor:pointer;padding:12px;border-radius:10px;
   font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;font-weight:700;
   width:100%;transition:.15s;box-shadow:0 4px 14px rgba(124,106,247,.3)}
 .btn:hover{opacity:.9}
 .btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-sm{background:var(--surface2);color:var(--text2);border:1px solid var(--border2);
-  border-radius:9px;padding:8px 12px;cursor:pointer;
-  font-family:'IBM Plex Sans Thai',sans-serif;font-size:12px;font-weight:600}
 .fp{display:flex;gap:6px;flex-wrap:wrap}
 .fpl{border:1px solid var(--border2);cursor:pointer;padding:6px 12px;border-radius:20px;
   font-family:'IBM Plex Sans Thai',sans-serif;font-size:12px;font-weight:600;
@@ -136,7 +119,6 @@ textarea.inp{resize:vertical;min-height:80px}
 .sbtn{padding:12px 4px;border-radius:10px;border:1.5px solid var(--border2);
   background:var(--bg);cursor:pointer;text-align:center;transition:.2s}
 
-/* TOAST */
 #toast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%) translateY(16px);
   background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:30px;
   font-size:13px;font-weight:600;z-index:9000;opacity:0;transition:.3s;
@@ -144,7 +126,6 @@ textarea.inp{resize:vertical;min-height:80px}
   box-shadow:0 4px 24px rgba(0,0,0,.5)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ADMIN */
 .tbr{border-bottom:1px solid var(--border);margin-bottom:13px;display:flex;overflow-x:auto;scrollbar-width:none}
 .tbr::-webkit-scrollbar{display:none}
 .tb{background:none;border:none;cursor:pointer;padding:9px 11px;
@@ -152,42 +133,37 @@ textarea.inp{resize:vertical;min-height:80px}
   border-bottom:2px solid transparent;color:var(--text2);transition:.15s;white-space:nowrap}
 .tb.on{color:var(--accent);border-bottom-color:var(--accent)}
 .rc{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px}
-
-/* STAG */
 .stag{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;
   letter-spacing:.3px;text-transform:uppercase;flex-shrink:0}
 
-/* DONATE */
-.donate-qr-box{width:180px;height:180px;border-radius:16px;background:white;
+/* donate */
+.donate-qr-box{width:200px;height:200px;border-radius:18px;background:white;
   display:flex;align-items:center;justify-content:center;
-  margin:0 auto 14px;overflow:hidden;border:3px solid var(--border2)}
-.donate-qr-box img{width:174px;height:174px;object-fit:contain}
-.donate-name{font-family:'Space Mono',monospace;font-size:17px;font-weight:700;
+  margin:0 auto 16px;overflow:hidden;border:3px solid var(--border2);
+  box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.donate-qr-box img{width:194px;height:194px;object-fit:contain}
+.donate-name{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;
   color:var(--yellow);text-align:center;margin-bottom:4px}
-.donate-bank{font-size:12px;color:var(--text2);text-align:center;margin-bottom:14px}
-.donate-msg{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;
-  padding:12px;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px;white-space:pre-wrap}
+.donate-bank{font-size:13px;color:var(--text2);text-align:center;margin-bottom:16px}
+.donate-msg{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;
+  padding:14px;font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;white-space:pre-wrap}
 
-/* SPINNER */
 .spin-s{display:inline-block;width:13px;height:13px;
   border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
   border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ERROR */
 #errBar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;
   background:#3a0d0d;color:#fca5a5;font-size:12px;font-weight:600;
   padding:7px 14px;text-align:center;font-family:'IBM Plex Sans Thai',sans-serif;
   border-bottom:1px solid #7f1d1d}
 
-/* LOADING */
 #ldg{position:absolute;inset:0;z-index:450;background:var(--bg);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .ldg-ring{width:48px;height:48px;border-radius:50%;
   border:3px solid var(--border2);border-top-color:var(--accent);animation:spin .8s linear infinite}
 .ldg-txt{font-family:'Space Mono',monospace;font-size:12px;color:var(--text2);letter-spacing:.5px}
 
-/* LIST */
 .lcard{background:var(--bg);border:1px solid var(--border);border-radius:12px;
   padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:11px;
   cursor:pointer;transition:.15s}
@@ -196,7 +172,6 @@ textarea.inp{resize:vertical;min-height:80px}
   background:var(--surface);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .lbrand img{width:38px;height:38px;object-fit:contain;border-radius:7px}
 
-/* MAP */
 .leaflet-control-zoom{border:1px solid var(--border)!important;border-radius:10px!important;overflow:hidden}
 .leaflet-control-zoom a{background:var(--surface2)!important;color:var(--text)!important;border-bottom:1px solid var(--border)!important}
 .leaflet-control-zoom a:hover{background:var(--border2)!important}
@@ -211,18 +186,6 @@ textarea.inp{resize:vertical;min-height:80px}
   animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(124,106,247,.3),0 3px 10px rgba(0,0,0,.5)}
   50%{box-shadow:0 0 0 8px rgba(124,106,247,.1),0 3px 10px rgba(0,0,0,.5)}}
-
-/* ADMIN FUEL EDIT */
-.fuel-edit-row{margin-bottom:10px}
-.fuel-edit-label{font-size:11px;color:var(--text2);font-weight:600;margin-bottom:5px}
-.fuel-edit-btns{display:flex;gap:4px}
-.feb{flex:1;padding:6px 2px;border-radius:8px;border:1.5px solid var(--border2);
-  background:var(--bg);cursor:pointer;font-size:10px;font-weight:700;
-  color:var(--text3);transition:.15s;font-family:'IBM Plex Sans Thai',sans-serif;text-align:center}
-.feb.on-available{border-color:var(--green);background:rgba(34,212,116,.12);color:var(--green)}
-.feb.on-limited{border-color:var(--yellow);background:rgba(245,183,49,.12);color:var(--yellow)}
-.feb.on-empty{border-color:var(--red);background:rgba(247,68,68,.12);color:var(--red)}
-.feb.on-none{border-color:var(--text3);color:var(--text3)}
 
 @media(min-width:768px){
   .ov{align-items:center;justify-content:flex-end;padding:20px}
@@ -241,7 +204,6 @@ textarea.inp{resize:vertical;min-height:80px}
     <div class="ldg-txt">LOADING STATIONS…</div>
   </div>
 
-  <!-- TOP -->
   <div id="top">
     <div class="logo-row">
       <div class="logo-icon">⛽</div>
@@ -249,7 +211,6 @@ textarea.inp{resize:vertical;min-height:80px}
         <div class="logo-text">ลำเต้ยหาน้ำมัน</div>
         <div class="logo-sub">เขมราฐ · นาตาล · ตระการ · โพธิ์ไทร</div>
       </div>
-      <button class="donate-top-btn" onclick="openDonate()">☕ โดเนท</button>
     </div>
     <div id="pills">
       <button class="pl on" onclick="setF('ทั้งหมด')">ทั้งหมด</button>
@@ -263,7 +224,6 @@ textarea.inp{resize:vertical;min-height:80px}
   <div id="map"></div>
   <button id="locBtn" onclick="locateMe()">📍</button>
 
-  <!-- STATS -->
   <div id="sbar">
     <div class="sc"><div class="sn" style="color:var(--text)" id="st0">0</div><div class="sl">ปั๊มทั้งหมด</div></div>
     <div class="sc"><div class="sn" style="color:var(--green)" id="st1">0</div><div class="sl">มีน้ำมัน</div></div>
@@ -271,22 +231,21 @@ textarea.inp{resize:vertical;min-height:80px}
     <div class="sc"><div class="sn" style="color:var(--blue)" id="st3">0</div><div class="sl">วันนี้</div></div>
   </div>
 
-  <!-- NAV -->
   <div id="bnav">
     <button class="ni on" id="ni0" onclick="navTo('map')"><span>🗺️</span><p>แผนที่</p></button>
     <button class="ni" id="ni1" onclick="navTo('list')"><span>📋</span><p>รายการ</p></button>
     <button id="brep" onclick="openRep(null)">
       <div class="brep-i"><span style="font-size:16px">📢</span><span>รายงาน</span></div>
     </button>
+    <button class="ni" onclick="openDonate()"><span>☕</span><p>โดเนท</p></button>
     <button class="ni" id="ni3" onclick="openAdm()"><span id="adico">🔐</span><p>แอดมิน</p></button>
-    <button class="ni" onclick="doRefresh()"><span>🔄</span><p>รีเฟรช</p></button>
   </div>
 </div>
 
 <div id="errBar"></div>
 <div id="toast"></div>
 
-<!-- ══ DONATE SHEET ══ -->
+<!-- DONATE SHEET -->
 <div class="ov" id="ovDonate" onclick="closeOv('ovDonate')">
   <div class="sh" onclick="event.stopPropagation()">
     <div class="hdl"></div>
@@ -295,7 +254,7 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<!-- ══ REPORT SHEET ══ -->
+<!-- REPORT SHEET -->
 <div class="ov" id="ovRep" onclick="closeOv('ovRep')">
   <div class="sh" onclick="event.stopPropagation()">
     <div class="hdl"></div>
@@ -303,7 +262,7 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<!-- ══ LOGIN SHEET ══ -->
+<!-- LOGIN SHEET -->
 <div class="ov" id="ovLog" onclick="closeOv('ovLog')">
   <div class="sh" onclick="event.stopPropagation()" style="max-height:52vh">
     <div class="hdl"></div>
@@ -318,7 +277,7 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<!-- ══ ADMIN SHEET ══ -->
+<!-- ADMIN SHEET -->
 <div class="ov" id="ovAdm" onclick="closeOv('ovAdm')">
   <div class="sh" onclick="event.stopPropagation()">
     <div class="hdl"></div>
@@ -333,13 +292,12 @@ textarea.inp{resize:vertical;min-height:80px}
       <button class="tb on" id="tb0" onclick="setATab(0)">รอตรวจ&nbsp;<span id="pbdg"></span></button>
       <button class="tb"    id="tb1" onclick="setATab(1)">อนุมัติ (<span id="acnt">0</span>)</button>
       <button class="tb"    id="tb2" onclick="setATab(2)">✏️ แก้สถานะ</button>
-      <button class="tb"    id="tb3" onclick="setATab(3)">☕ โดเนท</button>
     </div>
     <div id="admC"></div>
   </div>
 </div>
 
-<!-- ══ LIST SHEET ══ -->
+<!-- LIST SHEET -->
 <div class="ov" id="ovList" onclick="closeOv('ovList')">
   <div class="sh" onclick="event.stopPropagation()">
     <div class="hdl"></div>
@@ -351,25 +309,31 @@ textarea.inp{resize:vertical;min-height:80px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 // ══ CONFIG ══
-const GAS_URL   = 'https://script.google.com/macros/s/AKfycbxNpIVQ8GSiDtP7YYyEuzjsJfX7tbftw4ezM4G4F4W2z0-Wcxt__Fcw9_oDdwpfyAJS/exec';
+const GAS_URL   = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
 const ADMIN_PWD = 'fuel2024';
 
-// ══ STATIONS (14 ปั๊ม, bug GPS แก้แล้ว) ══
+// ══ DONATE INFO (ฝังในโค้ดเลย ไม่ใช้ localStorage) ══
+const DONATE = {
+  name: 'สุภร  อนุสุริยา',
+  bank: 'ธนาคารกรุงศรี / เลขบัญชี  0221756840',
+  msg:  '☕ ขอบคุณที่ช่วยสนับสนุน!\nทุกยอดช่วยค่าเซิร์ฟเวอร์ได้มาก 🙏',
+  qr:   'https://img1.pic.in.th/images/107844_0.md.jpg',
+};
+
+// ══ STATIONS ══
 const STATIONS = [
   {id:'s01',brand:'PTT',name:'ปตท. เขมราฐ',        district:'เขมราฐ',      lat:16.039768,lng:105.223254},
   {id:'s02',brand:'PT', name:'PT เขมราฐ',           district:'เขมราฐ',      lat:16.021422,lng:105.227206},
   {id:'s03',brand:'BJ', name:'บางจาก เขมราฐ',       district:'เขมราฐ',      lat:16.038160,lng:105.217532},
   {id:'s04',brand:'PTT',name:'ปตท. นาตาล',          district:'นาตาล',       lat:15.900194,lng:105.284962},
   {id:'s05',brand:'PT', name:'PT นาตาล',            district:'นาตาล',       lat:15.900713,lng:105.283836},
-  {id:'s06',brand:'PTT',name:'ปตท. ตระการพืชผล 1', district:'ตระการพืชผล', lat:15.710737,lng:105.087668},
-  {id:'s07',brand:'PTT',name:'ปตท. ตระการพืชผล 1', district:'ตระการพืชผล', lat:15.686480,lng:105.074589},
-  {id:'s08',brand:'PTT',name:'ปตท. ตระการพืชผล 1', district:'ตระการพืชผล', lat:15.591216,lng:105.018744},
-  {id:'s09',brand:'PTT',name:'ปตท. ตระการพืชผล 2', district:'ตระการพืชผล', lat:15.620009,lng:105.029060},
-  {id:'s10',brand:'PT', name:'PT ตระการพืชผล',      district:'ตระการพืชผล', lat:15.610887,lng:105.027106},
-  {id:'s11',brand:'BJ', name:'บางจาก ตระการพืชผล', district:'ตระการพืชผล', lat:15.616067,lng:105.027085},
-  {id:'s12',brand:'PTT',name:'ปตท. โพธิ์ไทร',       district:'โพธิ์ไทร',    lat:15.813011,lng:105.241505},
-  {id:'s13',brand:'PT', name:'PT โพธิ์ไทร',         district:'โพธิ์ไทร',    lat:15.814719,lng:105.244803},
-  {id:'s14',brand:'BJ', name:'บางจาก โพธิ์ไทร',     district:'โพธิ์ไทร',    lat:15.822390,lng:105.249777},
+  {id:'s06',brand:'PTT',name:'ปตท. ตระการพืชผล 1', district:'ตระการพืชผล', lat:15.591216,lng:105.018744},
+  {id:'s07',brand:'PTT',name:'ปตท. ตระการพืชผล 2', district:'ตระการพืชผล', lat:15.620009,lng:105.029060},
+  {id:'s08',brand:'PT', name:'PT ตระการพืชผล',      district:'ตระการพืชผล', lat:15.610887,lng:105.027106},
+  {id:'s09',brand:'BJ', name:'บางจาก ตระการพืชผล', district:'ตระการพืชผล', lat:15.616067,lng:105.027085},
+  {id:'s10',brand:'PTT',name:'ปตท. โพธิ์ไทร',       district:'โพธิ์ไทร',    lat:15.813011,lng:105.241505},
+  {id:'s11',brand:'PT', name:'PT โพธิ์ไทร',         district:'โพธิ์ไทร',    lat:15.814719,lng:105.244803},
+  {id:'s12',brand:'BJ', name:'บางจาก โพธิ์ไทร',     district:'โพธิ์ไทร',    lat:15.822390,lng:105.249777},
 ];
 
 const BRAND_CFG={
@@ -384,14 +348,6 @@ const ST={
 };
 const FUELS=['ดีเซล','เบนซิน 91','เบนซิน 95','E20'];
 const DISTRICTS=['เขมราฐ','นาตาล','ตระการพืชผล','โพธิ์ไทร'];
-
-// ══ DONATE INFO (stored in localStorage) ══
-let DONATE={
-  name:'ชื่อบัญชี',
-  bank:'ธนาคาร / เลขบัญชี',
-  msg:'☕ ขอบคุณที่ช่วยสนับสนุน!\nทุกยอดช่วยค่าเซิร์ฟเวอร์ได้มาก 🙏',
-  qr:'',
-};
 
 // ══ STATE ══
 const statusMap={};
@@ -432,8 +388,6 @@ function showToast(msg,ok=true){
   el.style.borderColor=ok?'rgba(34,212,116,.3)':'rgba(247,68,68,.3)';
   el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200);
 }
-function saveDonate(){try{localStorage.setItem('fw_donate',JSON.stringify(DONATE));}catch(e){}}
-function loadDonate(){try{const s=localStorage.getItem('fw_donate');if(s)Object.assign(DONATE,JSON.parse(s));}catch(e){}}
 
 // ══ STATUS MAP ══
 function rebuildStatus(){
@@ -469,7 +423,10 @@ async function apiPost(body){
 async function doRefresh(){
   if(!isReal()){renderMap();updateStats();return;}
   try{
-    const[,apList]=await Promise.all([apiGet('stations').catch(()=>[]),apiGet('approved').catch(()=>[])]);
+    const[,apList]=await Promise.all([
+      apiGet('stations').catch(()=>[]),
+      apiGet('approved').catch(()=>[])
+    ]);
     approved=Array.isArray(apList)?apList:[];
     if(isAdmin)pending=await apiGet('reports').catch(()=>[]);
     rebuildStatus();renderMap();updateStats();
@@ -550,7 +507,6 @@ function renderMap(){
 
 function initMap(){
   MAP=L.map('map',{center:[15.88,105.16],zoom:10,zoomControl:false});
-  // ← แผนที่ปกติ OpenStreetMap (ไม่ dark)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',maxZoom:19
   }).addTo(MAP);
@@ -577,8 +533,8 @@ function setF(f){
     b.classList.toggle('on',
       (t==='ทั้งหมด'&&f==='ทั้งหมด')||
       (t.includes('ดีเซล')&&f==='ดีเซล')||
-      ((t==='🔵 91'||t==='91')&&f==='เบนซิน 91')||
-      ((t==='🔴 95'||t==='95')&&f==='เบนซิน 95')||
+      ((t.includes('91'))&&f==='เบนซิน 91')||
+      ((t.includes('95'))&&f==='เบนซิน 95')||
       (t.includes('E20')&&f==='E20')
     );
   });
@@ -587,16 +543,14 @@ function setF(f){
 
 // ══ DONATE ══
 function openDonate(){
-  const el=document.getElementById('donateView');
-  el.innerHTML=`
+  document.getElementById('donateView').innerHTML=`
     <div class="donate-qr-box">
-      ${DONATE.qr
-        ?`<img src="${DONATE.qr}" alt="QR" onerror="this.parentNode.innerHTML='<div style=\\'font-size:36px;color:#44445a\\'>📷</div>'"/>`
-        :`<div style="font-size:36px;color:#44445a">📷</div>`}
+      <img src="${DONATE.qr}" alt="QR PromptPay"
+        onerror="this.parentNode.innerHTML='<div style=\\'font-size:48px\\'>📷</div>'"/>
     </div>
-    <div class="donate-name">${DONATE.name||'—'}</div>
-    <div class="donate-bank">${DONATE.bank||'—'}</div>
-    <div class="donate-msg">${DONATE.msg||''}</div>
+    <div class="donate-name">${DONATE.name}</div>
+    <div class="donate-bank">${DONATE.bank}</div>
+    <div class="donate-msg">${DONATE.msg}</div>
     <button onclick="closeOv('ovDonate')" style="width:100%;padding:11px;border-radius:10px;
       border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
       cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;font-weight:600">ปิด</button>`;
@@ -692,7 +646,7 @@ function doLogin(){
 function doLogout(){isAdmin=false;adminPwd='';document.getElementById('adico').textContent='🔐';closeOv('ovAdm');}
 function setATab(n){
   atab=n;
-  [0,1,2,3].forEach(i=>{const el=document.getElementById('tb'+i);if(el)el.classList.toggle('on',i===n);});
+  [0,1,2].forEach(i=>{const el=document.getElementById('tb'+i);if(el)el.classList.toggle('on',i===n);});
   renderAdm();
 }
 
@@ -703,7 +657,6 @@ function renderAdm(){
   document.getElementById('acnt').textContent=approved.length;
   const el=document.getElementById('admC');
 
-  // TAB 0 — รอตรวจ
   if(atab===0){
     if(!pending.length){el.innerHTML='<div style="text-align:center;padding:28px 0;color:var(--text3)">✅ ไม่มีรายการรอตรวจ</div>';return;}
     el.innerHTML='';
@@ -743,7 +696,6 @@ function renderAdm(){
     return;
   }
 
-  // TAB 1 — อนุมัติแล้ว
   if(atab===1){
     if(!approved.length){el.innerHTML='<div style="text-align:center;padding:28px 0;color:var(--text3)">📋 ยังไม่มีรายงาน</div>';return;}
     el.innerHTML='';
@@ -768,45 +720,38 @@ function renderAdm(){
     return;
   }
 
-  // TAB 2 — แก้สถานะอิสระ
   if(atab===2){
     el.innerHTML=`<div style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">
-      แอดมินสามารถตั้งสถานะน้ำมันแต่ละประเภทของทุกปั๊มได้โดยตรง<br>
-      <span style="color:var(--text3)">การแก้ไขมีผลทันทีบนแผนที่</span>
+      ตั้งสถานะน้ำมันของแต่ละปั๊มได้โดยตรง มีผลทันทีบนแผนที่
     </div>`;
     DISTRICTS.forEach(dist=>{
       const dh=document.createElement('div');
       dh.style.cssText='font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--accent2);margin:16px 0 8px;letter-spacing:.8px;text-transform:uppercase';
       dh.textContent='📍 อำเภอ'+dist;
       el.appendChild(dh);
-
       STATIONS.filter(s=>s.district===dist).forEach(st=>{
         const card=document.createElement('div');
         card.className='rc';
         const ov=bestStatus(st.name);
         card.style.borderLeft=`3px solid ${ov?ST[ov].color:'var(--border2)'}`;
-
         let html=`<div style="font-weight:700;font-size:13px;color:var(--text);margin-bottom:10px">${st.name}</div>`;
         FUELS.forEach(f=>{
           const curSt=(statusMap[st.name]||{})[f]?.status||'none';
           const btns=['available','limited','empty','none'].map(k=>{
             const lbl=k==='available'?'✅ มี':k==='limited'?'⚠️ น้อย':k==='empty'?'❌ หมด':'— ล้าง';
             const on=curSt===k;
-            const borderC=k==='available'?'var(--green)':k==='limited'?'var(--yellow)':k==='empty'?'var(--red)':'var(--text3)';
-            const bgC=k==='available'?'rgba(34,212,116,.12)':k==='limited'?'rgba(245,183,49,.12)':k==='empty'?'rgba(247,68,68,.12)':'transparent';
+            const bc=k==='available'?'var(--green)':k==='limited'?'var(--yellow)':k==='empty'?'var(--red)':'var(--text3)';
+            const bg=k==='available'?'rgba(34,212,116,.12)':k==='limited'?'rgba(245,183,49,.12)':k==='empty'?'rgba(247,68,68,.12)':'transparent';
             return `<button onclick="adminSetFuel('${st.name}','${f}','${k}')"
-              style="flex:1;padding:6px 2px;border-radius:8px;border:1.5px solid ${on?borderC:'var(--border2)'};
-                background:${on?bgC:'var(--bg)'};cursor:pointer;font-size:10px;font-weight:700;
-                color:${on?borderC:'var(--text3)'};font-family:'IBM Plex Sans Thai',sans-serif;
-                transition:.15s;line-height:1.3;text-align:center">${lbl}</button>`;
+              style="flex:1;padding:6px 2px;border-radius:8px;border:1.5px solid ${on?bc:'var(--border2)'};
+                background:${on?bg:'var(--bg)'};cursor:pointer;font-size:10px;font-weight:700;
+                color:${on?bc:'var(--text3)'};font-family:'IBM Plex Sans Thai',sans-serif;line-height:1.3;text-align:center">${lbl}</button>`;
           }).join('');
-          html+=`<div class="fuel-edit-row">
-            <div class="fuel-edit-label">${f}</div>
+          html+=`<div style="margin-bottom:10px">
+            <div style="font-size:11px;color:var(--text2);font-weight:600;margin-bottom:5px">${f}</div>
             <div style="display:flex;gap:4px">${btns}</div>
           </div>`;
         });
-
-        // admin note field
         const an=getAdminNote(st.name);
         html+=`<div style="margin-top:10px;display:flex;gap:6px;align-items:center">
           <input class="inp" style="font-size:12px;padding:7px 10px;flex:1"
@@ -820,36 +765,9 @@ function renderAdm(){
         el.appendChild(card);
       });
     });
-    return;
-  }
-
-  // TAB 3 — ตั้งค่าโดเนท
-  if(atab===3){
-    el.innerHTML=`
-      <div style="font-size:11px;color:var(--text2);margin-bottom:16px;line-height:1.6">
-        ข้อมูลที่ผู้ใช้เห็นเมื่อกดปุ่ม ☕ โดเนท บันทึกในเครื่องนี้
-      </div>
-      <div class="ig"><label class="il">ชื่อบัญชี / ชื่อผู้รับโดเนท</label>
-        <input class="inp" id="dn-name" placeholder="เช่น นาย ก ข ค" value="${DONATE.name}"/>
-      </div>
-      <div class="ig"><label class="il">ธนาคาร / เลขบัญชี / พร้อมเพย์</label>
-        <input class="inp" id="dn-bank" placeholder="เช่น กสิกรไทย 123-4-56789-0" value="${DONATE.bank}"/>
-      </div>
-      <div class="ig"><label class="il">ข้อความในหน้าโดเนท</label>
-        <textarea class="inp" id="dn-msg" placeholder="ข้อความขอบคุณ...">${DONATE.msg}</textarea>
-      </div>
-      <div class="ig"><label class="il">URL รูป QR Code (ไม่บังคับ)</label>
-        <input class="inp" id="dn-qr" placeholder="https://i.imgur.com/..." value="${DONATE.qr}"/>
-        <div style="font-size:10px;color:var(--text3);margin-top:5px">วางลิงก์รูปจาก Imgur, Google Drive (ลิงก์ direct) หรืออื่นๆ</div>
-      </div>
-      <button class="btn" onclick="adminSaveDonate()" style="margin-bottom:10px">💾 บันทึกข้อมูลโดเนท</button>
-      <button onclick="openDonate()" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border2);
-        background:var(--surface2);color:var(--text2);cursor:pointer;
-        font-family:'IBM Plex Sans Thai',sans-serif;font-size:13px;font-weight:600">👁 ดูตัวอย่าง</button>`;
   }
 }
 
-// ── admin set fuel ──
 function adminSetFuel(stName,fuel,newStatus){
   const ts=new Date().toISOString();
   if(!statusMap[stName])statusMap[stName]={};
@@ -870,11 +788,9 @@ function adminSetFuel(stName,fuel,newStatus){
     apiPost({action:'admin_set_status',password:adminPwd,stationName:stName,fuelType:fuel,status:newStatus,timestamp:ts}).catch(()=>{});
   }
   renderMap();updateStats();renderAdm();
-  const label=newStatus==='none'?'ล้างข้อมูล':ST[newStatus].label;
-  showToast(`${stName} · ${fuel} → ${label}`);
+  showToast(`${stName} · ${fuel} → ${newStatus==='none'?'ล้างข้อมูล':ST[newStatus].label}`);
 }
 
-// ── admin save note ──
 function adminSaveNote(sid,stName){
   const note=(document.getElementById('note-'+sid)||{}).value||'';
   approved.forEach(r=>{if(r.stationName===stName)r.adminNote=note;});
@@ -882,16 +798,6 @@ function adminSaveNote(sid,stName){
   if(isReal())apiPost({action:'admin_save_note',password:adminPwd,stationName:stName,note}).catch(()=>{});
   renderMap();renderAdm();
   showToast('บันทึกหมายเหตุแล้ว');
-}
-
-// ── admin save donate ──
-function adminSaveDonate(){
-  DONATE.name=document.getElementById('dn-name').value.trim();
-  DONATE.bank=document.getElementById('dn-bank').value.trim();
-  DONATE.msg =document.getElementById('dn-msg').value.trim();
-  DONATE.qr  =document.getElementById('dn-qr').value.trim();
-  saveDonate();
-  showToast('บันทึกข้อมูลโดเนทแล้ว');
 }
 
 // ══ APPROVE / REJECT / DELETE ══
@@ -995,7 +901,6 @@ if(document.readyState==='loading'){
 }else{waitL(boot);}
 
 async function boot(){
-  loadDonate();
   initMap();renderMap();doRefresh();
   setInterval(doRefresh,120000);
   setTimeout(locateMe,800);
