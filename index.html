@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>⛽ FuelWatch — เขมราฐ นาตาล ตระการ โพธิ์ไทร</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#09090f;--surface:#111119;--surface2:#1a1a27;
+  --border:#252538;--border2:#2e2e48;
+  --text:#f0f0fa;--text2:#8888aa;--text3:#44445a;
+  --accent:#7c6af7;--accent2:#a89dff;
+  --green:#22d474;--yellow:#f5b731;--red:#f74444;--blue:#38c8f5;
+}
+html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(--text)}
+#wrap{height:100vh;display:flex;flex-direction:column;position:relative}
+#map{flex:1;min-height:0;width:100%}
+
+/* TOP BAR */
+#top{position:absolute;top:0;left:0;right:0;z-index:500;padding:12px 14px 10px;
+  background:linear-gradient(180deg,rgba(9,9,15,.96) 55%,transparent);pointer-events:none}
+#top>*{pointer-events:auto}
+.logo-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.logo-icon{width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),#4a3fc0);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;box-shadow:0 0 16px rgba(124,106,247,.35)}
+.logo-text{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.logo-sub{font-size:9px;color:var(--text2);margin-top:1px}
+.donate-top-btn{
+  margin-left:auto;display:flex;align-items:center;gap:5px;
+  background:linear-gradient(135deg,#f59e0b,#d97706);
+  border:none;border-radius:18px;padding:6px 13px;cursor:pointer;
+  font-family:'IBM Plex Sans Thai',sans-serif;font-size:11px;font-weight:700;
+  color:#fff;box-shadow:0 3px 12px rgba(245,158,11,.4);flex-shrink:0}
+
+/* FILTER PILLS */
+#pills{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+#pills::-webkit-scrollbar{display:none}
+.pl{border:1px solid var(--border2);cursor:pointer;padding:5px 12px;border-radius:20px;
+  font-family:'IBM Plex Sans Thai',sans-serif;font-size:11px;font-weight:600;color:var(--text2);
+  background:rgba(26,26,39,.85);backdrop-filter:blur(8px);
+  transition:all .18s;white-space:nowrap;flex-shrink:0}
+.pl.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 12px rgba(124,106,247,.4)}
+
+/* STATS */
+#sbar{background:var(--surface);border-top:1px solid var(--border);
+  display:grid;grid-template-columns:repeat(4,1fr);flex-shrink:0}
+.sc{padding:9px 4px;text-align:center;border-right:1px solid var(--border)}
+.sc:last-child{border-right:none}
+.sn{font-family:'Space Mono',monospace;font-size:17px;font-weight:700;line-height:1}
+.sl{font-size:9px;color:var(--text2);margin-top:3px;font-weight:500;letter-spacing:.3px;text-transform:uppercase}
+
+/* NAV */
+#bnav{background:var(--surface);border-top:1px solid var(--border);
+  display:flex;align-items:center;flex-shrink:0;height:58px;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;cursor:pointer;border:none;background:none;
+  font-family:'IBM Plex Sans Thai',sans-serif;color:var(--text3);height:100%;transition:color .15s}
+.ni.on{color:var(--accent)}
+.ni span{font-size:18px;line-height:1}
+.ni p{font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+#brep{flex:1.5;display:flex;align-items:center;justify-content:center;
+  border:none;background:none;cursor:pointer;height:100%;padding:0}
+.brep-i{background:linear-gradient(135deg,var(--accent),#4a3fc0);
+  border-radius:20px;padding:8px 14px;display:flex;align-items:center;gap:5px;
+  font-family:'IBM Plex Sans Thai',sans-serif;font-weight:700;font-size:12px;color:white;
+  box-shadow:0 4px 16px rgba(124,106,247,.45);position:relative;top:-9px;
+  border:1px solid rgba(255,255,255,.12)}
+
+/* OVERLAYS */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;
+  align-items:flex-end;backdrop-filter:blur(2px)}
+.ov.on{display:flex}
+.sh{background:var(--surface);border-radius:22px 22px 0 0;
+  border:1px solid var(--border);border-bottom:none;
+  width:100%;max-height:90vh;overflow-y:auto;padding:12px 16px 34px}
+.hdl{width:32px;height:3px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
+.sht{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px}
+
+/* POPUP */
+.leaflet-popup-content-wrapper{border-radius:16px!important;
+  box-shadow:0 8px 32px rgba(0,0,0,.5)!important;padding:0!important;overflow:hidden;
+  background:var(--surface2)!important;border:1px solid var(--border2)!important}
+.leaflet-popup-content{margin:0!important;width:268px!important}
+.leaflet-popup-tip-container{display:none}
+.pp{padding:14px}
+.pp-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.pp-logo{width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border2);
+  background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.pp-logo img{width:40px;height:40px;object-fit:contain;border-radius:8px}
+.pp-name{font-weight:700;font-size:13px;color:var(--text);line-height:1.3}
+.pp-dist{font-size:11px;color:var(--text2);margin-top:2px}
+.pp-fuels{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px}
+.pp-row{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 9px;border-radius:9px;border:1px solid transparent}
+.pp-fn{font-weight:600;font-size:11px;color:var(--text2)}
+.pp-bd{font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px}
+.pp-note{font-size:11px;color:var(--text2);background:var(--surface);
+  border:1px solid var(--border);border-radius:9px;padding:7px 10px;margin-bottom:10px;line-height:1.5}
+.pp-ft{display:flex;align-items:center;gap:6px}
+.pp-time{font-size:10px;color:var(--text3);flex:1;font-family:'Space Mono',monospace}
+.pp-btn{padding:6px 11px;border-radius:8px;font-size:11px;font-weight:700;
+  border:none;cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;
+  text-decoration:none;display:inline-block;transition:.15s}
+
+/* FORM */
+.ig{margin-bottom:13px}
+.il{font-size:11px;color:var(--text2);display:block;margin-bottom:5px;
+  font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+.inp{width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--border2);
+  border-radius:10px;color:var(--text);font-family:'IBM Plex Sans Thai',sans-serif;
+  font-size:14px;outline:none;transition:border-color .15s}
+.inp:focus{border-color:var(--accent)}
+select.inp option{background:var(--surface2)}
+textarea.inp{resize:vertical;min-height:80px}
+.btn{background:linear-gradient(135deg,var(--accent),#4a3fc0);color:white;border:none;
+  cursor:pointer;padding:12px;border-radius:10px;
+  font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;font-weight:700;
+  width:100%;transition:.15s;box-shadow:0 4px 14px rgba(124,106,247,.3)}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-sm{background:var(--surface2);color:var(--text2);border:1px solid var(--border2);
+  border-radius:9px;padding:8px 12px;cursor:pointer;
+  font-family:'IBM Plex Sans Thai',sans-serif;font-size:12px;font-weight:600}
+.fp{display:flex;gap:6px;flex-wrap:wrap}
+.fpl{border:1px solid var(--border2);cursor:pointer;padding:6px 12px;border-radius:20px;
+  font-family:'IBM Plex Sans Thai',sans-serif;font-size:12px;font-weight:600;
+  background:var(--bg);color:var(--text2);transition:.15s}
+.fpl.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.sbtn{padding:12px 4px;border-radius:10px;border:1.5px solid var(--border2);
+  background:var(--bg);cursor:pointer;text-align:center;transition:.2s}
+
+/* TOAST */
+#toast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:30px;
+  font-size:13px;font-weight:600;z-index:9000;opacity:0;transition:.3s;
+  pointer-events:none;white-space:nowrap;border:1px solid var(--border2);
+  box-shadow:0 4px 24px rgba(0,0,0,.5)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ADMIN */
+.tbr{border-bottom:1px solid var(--border);margin-bottom:13px;display:flex;overflow-x:auto;scrollbar-width:none}
+.tbr::-webkit-scrollbar{display:none}
+.tb{background:none;border:none;cursor:pointer;padding:9px 11px;
+  font-family:'IBM Plex Sans Thai',sans-serif;font-size:11px;font-weight:600;
+  border-bottom:2px solid transparent;color:var(--text2);transition:.15s;white-space:nowrap}
+.tb.on{color:var(--accent);border-bottom-color:var(--accent)}
+.rc{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px}
+
+/* STAG */
+.stag{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;
+  letter-spacing:.3px;text-transform:uppercase;flex-shrink:0}
+
+/* DONATE */
+.donate-qr-box{width:180px;height:180px;border-radius:16px;background:white;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;overflow:hidden;border:3px solid var(--border2)}
+.donate-qr-box img{width:174px;height:174px;object-fit:contain}
+.donate-name{font-family:'Space Mono',monospace;font-size:17px;font-weight:700;
+  color:var(--yellow);text-align:center;margin-bottom:4px}
+.donate-bank{font-size:12px;color:var(--text2);text-align:center;margin-bottom:14px}
+.donate-msg{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;
+  padding:12px;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px;white-space:pre-wrap}
+
+/* SPINNER */
+.spin-s{display:inline-block;width:13px;height:13px;
+  border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ERROR */
+#errBar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:#3a0d0d;color:#fca5a5;font-size:12px;font-weight:600;
+  padding:7px 14px;text-align:center;font-family:'IBM Plex Sans Thai',sans-serif;
+  border-bottom:1px solid #7f1d1d}
+
+/* LOADING */
+#ldg{position:absolute;inset:0;z-index:450;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.ldg-ring{width:48px;height:48px;border-radius:50%;
+  border:3px solid var(--border2);border-top-color:var(--accent);animation:spin .8s linear infinite}
+.ldg-txt{font-family:'Space Mono',monospace;font-size:12px;color:var(--text2);letter-spacing:.5px}
+
+/* LIST */
+.lcard{background:var(--bg);border:1px solid var(--border);border-radius:12px;
+  padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:11px;
+  cursor:pointer;transition:.15s}
+.lcard:hover{border-color:var(--border2);background:var(--surface2)}
+.lbrand{width:42px;height:42px;border-radius:11px;border:1.5px solid var(--border2);
+  background:var(--surface);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lbrand img{width:38px;height:38px;object-fit:contain;border-radius:7px}
+
+/* MAP */
+.leaflet-control-zoom{border:1px solid var(--border)!important;border-radius:10px!important;overflow:hidden}
+.leaflet-control-zoom a{background:var(--surface2)!important;color:var(--text)!important;border-bottom:1px solid var(--border)!important}
+.leaflet-control-zoom a:hover{background:var(--border2)!important}
+#locBtn{position:absolute;bottom:130px;right:12px;z-index:500;
+  width:40px;height:40px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;
+  box-shadow:0 3px 12px rgba(0,0,0,.4);transition:.15s}
+#locBtn:hover{background:var(--border2)}
+#locBtn.locating{border-color:var(--accent);box-shadow:0 0 14px rgba(124,106,247,.4)}
+.user-dot{width:18px;height:18px;border-radius:50%;background:var(--accent);
+  border:3px solid #fff;box-shadow:0 0 0 4px rgba(124,106,247,.3),0 3px 10px rgba(0,0,0,.5);
+  animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(124,106,247,.3),0 3px 10px rgba(0,0,0,.5)}
+  50%{box-shadow:0 0 0 8px rgba(124,106,247,.1),0 3px 10px rgba(0,0,0,.5)}}
+
+/* ADMIN FUEL EDIT */
+.fuel-edit-row{margin-bottom:10px}
+.fuel-edit-label{font-size:11px;color:var(--text2);font-weight:600;margin-bottom:5px}
+.fuel-edit-btns{display:flex;gap:4px}
+.feb{flex:1;padding:6px 2px;border-radius:8px;border:1.5px solid var(--border2);
+  background:var(--bg);cursor:pointer;font-size:10px;font-weight:700;
+  color:var(--text3);transition:.15s;font-family:'IBM Plex Sans Thai',sans-serif;text-align:center}
+.feb.on-available{border-color:var(--green);background:rgba(34,212,116,.12);color:var(--green)}
+.feb.on-limited{border-color:var(--yellow);background:rgba(245,183,49,.12);color:var(--yellow)}
+.feb.on-empty{border-color:var(--red);background:rgba(247,68,68,.12);color:var(--red)}
+.feb.on-none{border-color:var(--text3);color:var(--text3)}
+
+@media(min-width:768px){
+  .ov{align-items:center;justify-content:flex-end;padding:20px}
+  .sh{max-width:400px;border-radius:18px;max-height:84vh;border:1px solid var(--border2)}
+  .hdl{display:none}
+  .leaflet-popup-content{width:285px!important}
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="ldg">
+    <div class="ldg-ring"></div>
+    <div class="ldg-txt">LOADING STATIONS…</div>
+  </div>
+
+  <!-- TOP -->
+  <div id="top">
+    <div class="logo-row">
+      <div class="logo-icon">⛽</div>
+      <div>
+        <div class="logo-text">ลำเต้ยหาน้ำมัน</div>
+        <div class="logo-sub">เขมราฐ · นาตาล · ตระการ · โพธิ์ไทร</div>
+      </div>
+      <button class="donate-top-btn" onclick="openDonate()">☕ โดเนท</button>
+    </div>
+    <div id="pills">
+      <button class="pl on" onclick="setF('ทั้งหมด')">ทั้งหมด</button>
+      <button class="pl" onclick="setF('ดีเซล')">🚛 ดีเซล</button>
+      <button class="pl" onclick="setF('เบนซิน 91')">🔵 91</button>
+      <button class="pl" onclick="setF('เบนซิน 95')">🔴 95</button>
+      <button class="pl" onclick="setF('E20')">🌿 E20</button>
+    </div>
+  </div>
+
+  <div id="map"></div>
+  <button id="locBtn" onclick="locateMe()">📍</button>
+
+  <!-- STATS -->
+  <div id="sbar">
+    <div class="sc"><div class="sn" style="color:var(--text)" id="st0">0</div><div class="sl">ปั๊มทั้งหมด</div></div>
+    <div class="sc"><div class="sn" style="color:var(--green)" id="st1">0</div><div class="sl">มีน้ำมัน</div></div>
+    <div class="sc"><div class="sn" style="color:var(--red)" id="st2">0</div><div class="sl">หมดแล้ว</div></div>
+    <div class="sc"><div class="sn" style="color:var(--blue)" id="st3">0</div><div class="sl">วันนี้</div></div>
+  </div>
+
+  <!-- NAV -->
+  <div id="bnav">
+    <button class="ni on" id="ni0" onclick="navTo('map')"><span>🗺️</span><p>แผนที่</p></button>
+    <button class="ni" id="ni1" onclick="navTo('list')"><span>📋</span><p>รายการ</p></button>
+    <button id="brep" onclick="openRep(null)">
+      <div class="brep-i"><span style="font-size:16px">📢</span><span>รายงาน</span></div>
+    </button>
+    <button class="ni" id="ni3" onclick="openAdm()"><span id="adico">🔐</span><p>แอดมิน</p></button>
+    <button class="ni" onclick="doRefresh()"><span>🔄</span><p>รีเฟรช</p></button>
+  </div>
+</div>
+
+<div id="errBar"></div>
+<div id="toast"></div>
+
+<!-- ══ DONATE SHEET ══ -->
+<div class="ov" id="ovDonate" onclick="closeOv('ovDonate')">
+  <div class="sh" onclick="event.stopPropagation()">
+    <div class="hdl"></div>
+    <div class="sht">☕ สนับสนุนผู้พัฒนา</div>
+    <div id="donateView"></div>
+  </div>
+</div>
+
+<!-- ══ REPORT SHEET ══ -->
+<div class="ov" id="ovRep" onclick="closeOv('ovRep')">
+  <div class="sh" onclick="event.stopPropagation()">
+    <div class="hdl"></div>
+    <div id="repC"></div>
+  </div>
+</div>
+
+<!-- ══ LOGIN SHEET ══ -->
+<div class="ov" id="ovLog" onclick="closeOv('ovLog')">
+  <div class="sh" onclick="event.stopPropagation()" style="max-height:52vh">
+    <div class="hdl"></div>
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:36px;margin-bottom:10px">🔐</div>
+      <div style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--text)">ADMIN LOGIN</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">ใส่รหัสผ่านเพื่อเข้าสู่ระบบ</div>
+    </div>
+    <input class="inp" type="password" id="pw" placeholder="รหัสผ่าน" style="margin-bottom:10px" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div id="pwerr" style="color:var(--red);font-size:12px;text-align:center;margin-bottom:8px;display:none">❌ รหัสผ่านไม่ถูกต้อง</div>
+    <button class="btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN SHEET ══ -->
+<div class="ov" id="ovAdm" onclick="closeOv('ovAdm')">
+  <div class="sh" onclick="event.stopPropagation()">
+    <div class="hdl"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text)">🔧 ADMIN PANEL</div>
+      <div style="display:flex;gap:6px">
+        <button onclick="doRefresh()" style="background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:11px">🔄</button>
+        <button onclick="doLogout()" style="background:rgba(247,68,68,.15);color:var(--red);border:1px solid rgba(247,68,68,.3);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:600">ออก</button>
+      </div>
+    </div>
+    <div class="tbr">
+      <button class="tb on" id="tb0" onclick="setATab(0)">รอตรวจ&nbsp;<span id="pbdg"></span></button>
+      <button class="tb"    id="tb1" onclick="setATab(1)">อนุมัติ (<span id="acnt">0</span>)</button>
+      <button class="tb"    id="tb2" onclick="setATab(2)">✏️ แก้สถานะ</button>
+      <button class="tb"    id="tb3" onclick="setATab(3)">☕ โดเนท</button>
+    </div>
+    <div id="admC"></div>
+  </div>
+</div>
+
+<!-- ══ LIST SHEET ══ -->
+<div class="ov" id="ovList" onclick="closeOv('ovList')">
+  <div class="sh" onclick="event.stopPropagation()">
+    <div class="hdl"></div>
+    <div style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px">📋 รายการปั๊มทั้งหมด</div>
+    <div id="listC"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ══ CONFIG ══
+const GAS_URL   = 'https://script.google.com/macros/s/AKfycbxNpIVQ8GSiDtP7YYyEuzjsJfX7tbftw4ezM4G4F4W2z0-Wcxt__Fcw9_oDdwpfyAJS/exec';
+const ADMIN_PWD = 'fuel2024';
+
+// ══ STATIONS (14 ปั๊ม, bug GPS แก้แล้ว) ══
+const STATIONS = [
+  {id:'s01',brand:'PTT',name:'ปตท. เขมราฐ',        district:'เขมราฐ',      lat:16.039768,lng:105.223254},
+  {id:'s02',brand:'PT', name:'PT เขมราฐ',           district:'เขมราฐ',      lat:16.021422,lng:105.227206},
+  {id:'s03',brand:'BJ', name:'บางจาก เขมราฐ',       district:'เขมราฐ',      lat:16.038160,lng:105.217532},
+  {id:'s04',brand:'PTT',name:'ปตท. นาตาล',          district:'นาตาล',       lat:15.900194,lng:105.284962},
+  {id:'s05',brand:'PT', name:'PT นาตาล',            district:'นาตาล',       lat:15.900713,lng:105.283836},
+  {id:'s06',brand:'PTT',name:'ปตท. ตระการพืชผล 1', district:'ตระการพืชผล', lat:15.710737,lng:105.087668},
+  {id:'s07',brand:'PTT',name:'ปตท. ตระการพืชผล 1', district:'ตระการพืชผล', lat:15.686480,lng:105.074589},
+  {id:'s08',brand:'PTT',name:'ปตท. ตระการพืชผล 1', district:'ตระการพืชผล', lat:15.591216,lng:105.018744},
+  {id:'s09',brand:'PTT',name:'ปตท. ตระการพืชผล 2', district:'ตระการพืชผล', lat:15.620009,lng:105.029060},
+  {id:'s10',brand:'PT', name:'PT ตระการพืชผล',      district:'ตระการพืชผล', lat:15.610887,lng:105.027106},
+  {id:'s11',brand:'BJ', name:'บางจาก ตระการพืชผล', district:'ตระการพืชผล', lat:15.616067,lng:105.027085},
+  {id:'s12',brand:'PTT',name:'ปตท. โพธิ์ไทร',       district:'โพธิ์ไทร',    lat:15.813011,lng:105.241505},
+  {id:'s13',brand:'PT', name:'PT โพธิ์ไทร',         district:'โพธิ์ไทร',    lat:15.814719,lng:105.244803},
+  {id:'s14',brand:'BJ', name:'บางจาก โพธิ์ไทร',     district:'โพธิ์ไทร',    lat:15.822390,lng:105.249777},
+];
+
+const BRAND_CFG={
+  PTT:{color:'#1a2e6e',label:'PTT',logo:'https://images.seeklogo.com/logo-png/28/1/ptt-thailand-logo-png_seeklogo-284984.png'},
+  PT: {color:'#dc2626',label:'PT', logo:'https://download-th.com/wp-content/uploads/2020/11/PT.jpg'},
+  BJ: {color:'#007a3d',label:'BJ', logo:'https://sg-test-11.slatic.net/other/shop/566075f6d14749bc956828dffb0d13be.png'},
+};
+const ST={
+  available:{label:'มีน้ำมัน', color:'#22d474',bg:'rgba(34,212,116,.12)',badge:'มี'  },
+  limited:  {label:'เหลือน้อย',color:'#f5b731',bg:'rgba(245,183,49,.12)',badge:'น้อย'},
+  empty:    {label:'หมดแล้ว',  color:'#f74444',bg:'rgba(247,68,68,.12)', badge:'หมด' },
+};
+const FUELS=['ดีเซล','เบนซิน 91','เบนซิน 95','E20'];
+const DISTRICTS=['เขมราฐ','นาตาล','ตระการพืชผล','โพธิ์ไทร'];
+
+// ══ DONATE INFO (stored in localStorage) ══
+let DONATE={
+  name:'ชื่อบัญชี',
+  bank:'ธนาคาร / เลขบัญชี',
+  msg:'☕ ขอบคุณที่ช่วยสนับสนุน!\nทุกยอดช่วยค่าเซิร์ฟเวอร์ได้มาก 🙏',
+  qr:'',
+};
+
+// ══ STATE ══
+const statusMap={};
+let approved=[],pending=[],isAdmin=false,adminPwd='';
+let filter='ทั้งหมด',atab=0;
+let MAP=null,MKR={},POP={};
+
+const isReal=()=>GAS_URL!=='YOUR_APPS_SCRIPT_WEB_APP_URL';
+const getBrand=st=>BRAND_CFG[st.brand]||{color:'#555',label:'⛽',logo:''};
+
+// ══ HELPERS ══
+function fmtT(ts){
+  if(!ts)return'';
+  const d=Math.floor((Date.now()-new Date(ts))/60000);
+  if(d<1)return'เพิ่งรายงาน';
+  if(d<60)return d+' นาทีที่แล้ว';
+  if(d<1440)return Math.floor(d/60)+' ชม.ที่แล้ว';
+  return Math.floor(d/1440)+' วันที่แล้ว';
+}
+function bestStatus(name){
+  const v=Object.values(statusMap[name]||{}).map(r=>r.status);
+  if(v.includes('available'))return'available';
+  if(v.includes('limited'))return'limited';
+  if(v.includes('empty'))return'empty';
+  return null;
+}
+function getAdminNote(name){
+  return(Object.values(statusMap[name]||{}).filter(r=>r.adminNote).map(r=>r.adminNote)[0])||'';
+}
+function getLastUpdate(name){
+  const all=Object.values(statusMap[name]||{}).filter(r=>r.timestamp);
+  if(!all.length)return null;
+  return all.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+}
+function showToast(msg,ok=true){
+  const el=document.getElementById('toast');
+  el.textContent=(ok?'✅ ':'⚠️ ')+msg;
+  el.style.borderColor=ok?'rgba(34,212,116,.3)':'rgba(247,68,68,.3)';
+  el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200);
+}
+function saveDonate(){try{localStorage.setItem('fw_donate',JSON.stringify(DONATE));}catch(e){}}
+function loadDonate(){try{const s=localStorage.getItem('fw_donate');if(s)Object.assign(DONATE,JSON.parse(s));}catch(e){}}
+
+// ══ STATUS MAP ══
+function rebuildStatus(){
+  Object.keys(statusMap).forEach(k=>delete statusMap[k]);
+  approved.forEach(r=>{
+    if(!statusMap[r.stationName])statusMap[r.stationName]={};
+    const cur=statusMap[r.stationName][r.fuelType];
+    if(!cur||new Date(r.timestamp)>new Date(cur.timestamp)){
+      statusMap[r.stationName][r.fuelType]={
+        status:r.status,note:r.note||'',adminNote:r.adminNote||'',
+        timestamp:r.timestamp,reporter:r.reporter||''
+      };
+    }
+  });
+}
+
+// ══ API ══
+async function apiGet(action){
+  const res=await fetch(GAS_URL+'?action='+encodeURIComponent(action),{redirect:'follow'});
+  const json=await res.json();
+  if(!json.ok)throw new Error(json.error||'API error');
+  return json.data;
+}
+async function apiPost(body){
+  const res=await fetch(GAS_URL,{method:'POST',redirect:'follow',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+  const json=await res.json();
+  if(!json.ok)throw new Error(json.error||'API error');
+  return json.data;
+}
+
+// ══ REFRESH ══
+async function doRefresh(){
+  if(!isReal()){renderMap();updateStats();return;}
+  try{
+    const[,apList]=await Promise.all([apiGet('stations').catch(()=>[]),apiGet('approved').catch(()=>[])]);
+    approved=Array.isArray(apList)?apList:[];
+    if(isAdmin)pending=await apiGet('reports').catch(()=>[]);
+    rebuildStatus();renderMap();updateStats();
+    if(isAdmin)renderAdm();
+    hideErr();
+  }catch(e){showErr('⚠️ '+e.message);renderMap();updateStats();}
+}
+
+// ══ MAP ══
+function makePin(st){
+  const ov=bestStatus(st.name);
+  const ring=ov?ST[ov].color:'#2e2e48';
+  const b=getBrand(st);
+  const dim=filter!=='ทั้งหมด'&&!(statusMap[st.name]?.[filter]);
+  const inner=b.logo
+    ?`<img src="${b.logo}" width="38" height="38" style="object-fit:contain;border-radius:8px"
+        onerror="this.parentNode.innerHTML='<span style=\\'font-size:12px;font-weight:700;color:#fff\\'>${b.label}</span>'">`
+    :`<span style="font-size:12px;font-weight:700;color:#fff">${b.label}</span>`;
+  const dot=ov?`<div style="position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-radius:50%;
+    background:${ST[ov].color};border:2px solid #09090f;box-shadow:0 0 8px ${ST[ov].color}88"></div>`:'';
+  return L.divIcon({className:'',
+    html:`<div style="opacity:${dim?.2:1};position:relative;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))">
+      <div style="width:46px;height:46px;border-radius:13px;border:2px solid ${ring};background:#1a1a27;
+        overflow:hidden;display:flex;align-items:center;justify-content:center;
+        box-shadow:${ov?`0 0 14px ${ring}55`:'none'}">${inner}</div>${dot}
+    </div>`,
+    iconSize:[46,46],iconAnchor:[23,46],popupAnchor:[0,-52]});
+}
+
+function makePopup(st){
+  const b=getBrand(st);
+  const ov=bestStatus(st.name),ring=ov?ST[ov].color:b.color;
+  const an=getAdminNote(st.name),last=getLastUpdate(st.name);
+  const logoHtml=b.logo
+    ?`<div class="pp-logo" style="border-color:${ring}"><img src="${b.logo}" onerror="this.style.display='none'"/></div>`
+    :`<div class="pp-logo" style="background:${b.color};border-color:${ring};color:white;font-size:13px;font-weight:700">${b.label}</div>`;
+  const rows=FUELS.map(f=>{
+    const r=(statusMap[st.name]||{})[f],cfg=r?ST[r.status]:null;
+    return `<div class="pp-row" style="background:${cfg?cfg.bg:'rgba(26,26,39,.5)'};border-color:${cfg?cfg.color+'33':'transparent'}">
+      <span class="pp-fn">${f}</span>
+      ${cfg?`<span class="pp-bd" style="color:${cfg.color};background:${cfg.bg}">${cfg.badge}</span>`
+           :`<span style="font-size:10px;color:#44445a">—</span>`}
+    </div>`;
+  }).join('');
+  return `<div class="pp">
+    <div class="pp-hd">${logoHtml}<div>
+      <div class="pp-name">${st.name}</div>
+      <div class="pp-dist">📍 ${st.district}</div>
+    </div></div>
+    <div class="pp-fuels">${rows}</div>
+    ${an?`<div class="pp-note">📌 ${an}</div>`:''}
+    <div class="pp-ft">
+      <span class="pp-time">${last?fmtT(last.timestamp):'ไม่มีข้อมูล'}</span>
+      <button class="pp-btn" style="background:var(--accent);color:#fff" onclick="openRep('${st.id}')">📢</button>
+      <a class="pp-btn" style="background:#14532d;color:#86efac"
+        href="https://www.google.com/maps/dir/?api=1&destination=${st.lat},${st.lng}" target="_blank">🧭</a>
+    </div>
+  </div>`;
+}
+
+function renderMap(){
+  if(!MAP)return;
+  STATIONS.forEach(st=>{
+    const icon=makePin(st);
+    if(MKR[st.id]){
+      MKR[st.id].setIcon(icon);
+      if(POP[st.id])POP[st.id].setContent(makePopup(st));
+    }else{
+      const pop=L.popup({maxWidth:275,minWidth:268,closeButton:true,autoClose:true,
+        autoPanPaddingTopLeft:L.point(10,80),autoPanPaddingBottomRight:L.point(10,90)})
+        .setContent(makePopup(st));
+      MKR[st.id]=L.marker([st.lat,st.lng],{icon}).addTo(MAP).bindPopup(pop);
+      POP[st.id]=pop;
+    }
+  });
+  document.getElementById('st0').textContent=STATIONS.length;
+}
+
+function initMap(){
+  MAP=L.map('map',{center:[15.88,105.16],zoom:10,zoomControl:false});
+  // ← แผนที่ปกติ OpenStreetMap (ไม่ dark)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',maxZoom:19
+  }).addTo(MAP);
+  L.control.zoom({position:'bottomright'}).addTo(MAP);
+  document.getElementById('ldg').style.display='none';
+  setTimeout(()=>MAP.invalidateSize(),120);
+}
+
+// ══ STATS ══
+function updateStats(){
+  let av=0,em=0;
+  STATIONS.forEach(s=>{const ov=bestStatus(s.name);if(ov==='available'||ov==='limited')av++;if(ov==='empty')em++;});
+  const td=approved.filter(r=>Date.now()-new Date(r.timestamp)<864e5).length;
+  document.getElementById('st1').textContent=av;
+  document.getElementById('st2').textContent=em;
+  document.getElementById('st3').textContent=td;
+}
+
+// ══ FILTER ══
+function setF(f){
+  filter=f;
+  document.querySelectorAll('.pl').forEach(b=>{
+    const t=b.textContent.trim();
+    b.classList.toggle('on',
+      (t==='ทั้งหมด'&&f==='ทั้งหมด')||
+      (t.includes('ดีเซล')&&f==='ดีเซล')||
+      ((t==='🔵 91'||t==='91')&&f==='เบนซิน 91')||
+      ((t==='🔴 95'||t==='95')&&f==='เบนซิน 95')||
+      (t.includes('E20')&&f==='E20')
+    );
+  });
+  renderMap();
+}
+
+// ══ DONATE ══
+function openDonate(){
+  const el=document.getElementById('donateView');
+  el.innerHTML=`
+    <div class="donate-qr-box">
+      ${DONATE.qr
+        ?`<img src="${DONATE.qr}" alt="QR" onerror="this.parentNode.innerHTML='<div style=\\'font-size:36px;color:#44445a\\'>📷</div>'"/>`
+        :`<div style="font-size:36px;color:#44445a">📷</div>`}
+    </div>
+    <div class="donate-name">${DONATE.name||'—'}</div>
+    <div class="donate-bank">${DONATE.bank||'—'}</div>
+    <div class="donate-msg">${DONATE.msg||''}</div>
+    <button onclick="closeOv('ovDonate')" style="width:100%;padding:11px;border-radius:10px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;font-weight:600">ปิด</button>`;
+  document.getElementById('ovDonate').classList.add('on');
+}
+
+// ══ REPORT ══
+let RF={stationId:'',fuelType:'ดีเซล',status:'available',note:'',reporter:''};
+function openRep(sid){
+  RF={stationId:sid||'',fuelType:'ดีเซล',status:'available',note:'',reporter:''};
+  if(MAP)MAP.closePopup();
+  renderRep();
+  document.getElementById('ovRep').classList.add('on');
+}
+function renderRep(msg){
+  const el=document.getElementById('repC');
+  if(msg){
+    el.innerHTML=`<div style="text-align:center;padding:32px 0">
+      <div style="font-size:48px;margin-bottom:12px">✅</div>
+      <div style="color:var(--green);font-weight:700;font-size:15px;font-family:'Space Mono',monospace">${msg}</div>
+    </div>`;return;
+  }
+  const opts=DISTRICTS.map(d=>`<optgroup label="อ.${d}">${
+    STATIONS.filter(s=>s.district===d).map(s=>
+      `<option value="${s.id}"${s.id===RF.stationId?' selected':''}>${s.name}</option>`
+    ).join('')
+  }</optgroup>`).join('');
+  const fp=FUELS.map(f=>
+    `<button class="fpl${f===RF.fuelType?' on':''}" onclick="RF.fuelType='${f}';renderRep()">${f}</button>`
+  ).join('');
+  const sb=[
+    {k:'available',ic:'✅',lb:'มีน้ำมัน',  c:'var(--green)'},
+    {k:'limited',  ic:'⚠️',lb:'เหลือน้อย',c:'var(--yellow)'},
+    {k:'empty',    ic:'❌',lb:'หมดแล้ว',  c:'var(--red)'},
+  ].map(s=>`<button class="sbtn"
+    style="border-color:${RF.status===s.k?s.c:'var(--border2)'};${RF.status===s.k?`background:${s.c}18`:''}"
+    onclick="RF.status='${s.k}';renderRep()">
+    <div style="font-size:18px">${s.ic}</div>
+    <div style="font-size:10px;font-weight:700;color:${RF.status===s.k?s.c:'var(--text2)'};margin-top:3px">${s.lb}</div>
+  </button>`).join('');
+  el.innerHTML=`<div class="sht">📢 รายงานสถานะ</div>
+    <div class="ig"><label class="il">ปั๊มน้ำมัน *</label>
+      <select class="inp" onchange="RF.stationId=this.value"><option value="">-- เลือกปั๊ม --</option>${opts}</select>
+    </div>
+    <div class="ig"><label class="il">ประเภทน้ำมัน</label><div class="fp">${fp}</div></div>
+    <div class="ig"><label class="il">สถานะ</label><div class="sgrid">${sb}</div></div>
+    <div class="ig"><label class="il">หมายเหตุ</label>
+      <input class="inp" placeholder="เช่น คิวยาว 30 นาที..." value="${RF.note}" oninput="RF.note=this.value"/>
+    </div>
+    <div class="ig"><label class="il">ชื่อผู้รายงาน</label>
+      <input class="inp" placeholder="ชื่อเล่น (ไม่บังคับ)" value="${RF.reporter}" oninput="RF.reporter=this.value"/>
+    </div>
+    <button class="btn" id="sbtn" onclick="doRep()">📢 ส่งรายงาน</button>`;
+}
+async function doRep(){
+  if(!RF.stationId){showToast('กรุณาเลือกปั๊มน้ำมัน',false);return;}
+  const btn=document.getElementById('sbtn');
+  btn.disabled=true;btn.innerHTML='<span class="spin-s"></span>กำลังส่ง...';
+  try{
+    const st=STATIONS.find(s=>s.id===RF.stationId);
+    const payload={action:'submit_report',stationName:st.name,district:st.district,
+      fuelType:RF.fuelType,status:RF.status,note:RF.note.trim(),
+      reporter:RF.reporter.trim()||'ไม่ระบุชื่อ'};
+    if(!isReal()){
+      pending=[{id:'r'+Date.now(),...payload,timestamp:new Date().toISOString()},...pending];
+      await new Promise(r=>setTimeout(r,500));
+    }else{await apiPost(payload);}
+    renderRep('ส่งรายงานแล้ว! 🙏');
+    setTimeout(()=>closeOv('ovRep'),2400);
+  }catch(e){
+    btn.disabled=false;btn.innerHTML='📢 ส่งรายงาน';
+    showToast('เกิดข้อผิดพลาด: '+e.message,false);
+  }
+}
+
+// ══ ADMIN ══
+function openAdm(){
+  if(isAdmin){document.getElementById('ovAdm').classList.add('on');renderAdm();}
+  else document.getElementById('ovLog').classList.add('on');
+}
+function doLogin(){
+  const v=document.getElementById('pw').value;
+  if(v===ADMIN_PWD){
+    isAdmin=true;adminPwd=v;
+    document.getElementById('adico').textContent='🔧';
+    document.getElementById('pwerr').style.display='none';
+    document.getElementById('pw').value='';
+    closeOv('ovLog');
+    if(isReal())apiGet('reports').then(d=>{pending=d;renderAdm();}).catch(()=>{});
+    document.getElementById('ovAdm').classList.add('on');renderAdm();
+  }else{document.getElementById('pwerr').style.display='block';}
+}
+function doLogout(){isAdmin=false;adminPwd='';document.getElementById('adico').textContent='🔐';closeOv('ovAdm');}
+function setATab(n){
+  atab=n;
+  [0,1,2,3].forEach(i=>{const el=document.getElementById('tb'+i);if(el)el.classList.toggle('on',i===n);});
+  renderAdm();
+}
+
+function renderAdm(){
+  const badge=pending.length>0
+    ?`<span style="background:var(--red);color:white;border-radius:50%;padding:0 5px;font-size:9px;margin-left:2px">${pending.length}</span>`:'';
+  document.getElementById('pbdg').outerHTML=`<span id="pbdg">${badge}</span>`;
+  document.getElementById('acnt').textContent=approved.length;
+  const el=document.getElementById('admC');
+
+  // TAB 0 — รอตรวจ
+  if(atab===0){
+    if(!pending.length){el.innerHTML='<div style="text-align:center;padding:28px 0;color:var(--text3)">✅ ไม่มีรายการรอตรวจ</div>';return;}
+    el.innerHTML='';
+    pending.forEach(r=>{
+      const sc=ST[r.status]||ST.empty;
+      const card=document.createElement('div');
+      card.className='rc';card.style.borderLeft=`3px solid ${sc.color}`;
+      card.innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <div style="font-weight:700;font-size:13px;color:var(--text)">${r.stationName}</div>
+            <div style="font-size:11px;color:var(--text2)">📍 ${r.district} · ⛽ ${r.fuelType}</div>
+            ${r.note?`<div style="font-size:10px;color:var(--text3);margin-top:2px">💬 ${r.note}</div>`:''}
+            <div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:'Space Mono',monospace">${fmtT(r.timestamp)} · ${r.reporter}</div>
+          </div>
+          <span class="stag" style="background:${sc.bg};color:${sc.color}">${sc.badge}</span>
+        </div>
+        <input class="inp" style="font-size:12px;padding:7px 10px;margin-bottom:8px" placeholder="หมายเหตุแอดมิน..." id="an-${r.id}"/>
+        <div style="display:flex;gap:7px">
+          <button data-id="${r.id}" data-act="ok"
+            style="flex:1;background:rgba(34,212,116,.1);color:var(--green);border:1px solid rgba(34,212,116,.3);
+              border-radius:9px;padding:8px;cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;font-weight:700;font-size:12px">✅ อนุมัติ</button>
+          <button data-id="${r.id}" data-act="del"
+            style="flex:1;background:rgba(247,68,68,.1);color:var(--red);border:1px solid rgba(247,68,68,.3);
+              border-radius:9px;padding:8px;cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;font-weight:700;font-size:12px">❌ ลบ</button>
+        </div>`;
+      card.querySelectorAll('button[data-act]').forEach(btn=>{
+        btn.onclick=()=>{
+          const id=btn.dataset.id;
+          btn.dataset.act==='ok'
+            ?approveR(id,(document.getElementById('an-'+id)||{}).value||'')
+            :rejectR(id);
+        };
+      });
+      el.appendChild(card);
+    });
+    return;
+  }
+
+  // TAB 1 — อนุมัติแล้ว
+  if(atab===1){
+    if(!approved.length){el.innerHTML='<div style="text-align:center;padding:28px 0;color:var(--text3)">📋 ยังไม่มีรายงาน</div>';return;}
+    el.innerHTML='';
+    approved.forEach(r=>{
+      const sc=ST[r.status]||ST.empty;
+      const card=document.createElement('div');
+      card.className='rc';card.style.cssText='display:flex;justify-content:space-between;align-items:flex-start';
+      card.innerHTML=`
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px;color:var(--text)">${r.stationName}</div>
+          <div style="font-size:11px;color:var(--text2)">📍 ${r.district} · ⛽ ${r.fuelType}</div>
+          ${r.adminNote?`<div style="font-size:10px;color:var(--yellow);margin-top:2px">📌 ${r.adminNote}</div>`:''}
+          <div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:'Space Mono',monospace">${fmtT(r.timestamp)} · ${r.reporter}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <span class="stag" style="background:${sc.bg};color:${sc.color}">${sc.badge}</span>
+          <button data-id="${r.id}" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px">🗑️</button>
+        </div>`;
+      card.querySelector('button[data-id]').onclick=()=>deleteA(r.id);
+      el.appendChild(card);
+    });
+    return;
+  }
+
+  // TAB 2 — แก้สถานะอิสระ
+  if(atab===2){
+    el.innerHTML=`<div style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+      แอดมินสามารถตั้งสถานะน้ำมันแต่ละประเภทของทุกปั๊มได้โดยตรง<br>
+      <span style="color:var(--text3)">การแก้ไขมีผลทันทีบนแผนที่</span>
+    </div>`;
+    DISTRICTS.forEach(dist=>{
+      const dh=document.createElement('div');
+      dh.style.cssText='font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--accent2);margin:16px 0 8px;letter-spacing:.8px;text-transform:uppercase';
+      dh.textContent='📍 อำเภอ'+dist;
+      el.appendChild(dh);
+
+      STATIONS.filter(s=>s.district===dist).forEach(st=>{
+        const card=document.createElement('div');
+        card.className='rc';
+        const ov=bestStatus(st.name);
+        card.style.borderLeft=`3px solid ${ov?ST[ov].color:'var(--border2)'}`;
+
+        let html=`<div style="font-weight:700;font-size:13px;color:var(--text);margin-bottom:10px">${st.name}</div>`;
+        FUELS.forEach(f=>{
+          const curSt=(statusMap[st.name]||{})[f]?.status||'none';
+          const btns=['available','limited','empty','none'].map(k=>{
+            const lbl=k==='available'?'✅ มี':k==='limited'?'⚠️ น้อย':k==='empty'?'❌ หมด':'— ล้าง';
+            const on=curSt===k;
+            const borderC=k==='available'?'var(--green)':k==='limited'?'var(--yellow)':k==='empty'?'var(--red)':'var(--text3)';
+            const bgC=k==='available'?'rgba(34,212,116,.12)':k==='limited'?'rgba(245,183,49,.12)':k==='empty'?'rgba(247,68,68,.12)':'transparent';
+            return `<button onclick="adminSetFuel('${st.name}','${f}','${k}')"
+              style="flex:1;padding:6px 2px;border-radius:8px;border:1.5px solid ${on?borderC:'var(--border2)'};
+                background:${on?bgC:'var(--bg)'};cursor:pointer;font-size:10px;font-weight:700;
+                color:${on?borderC:'var(--text3)'};font-family:'IBM Plex Sans Thai',sans-serif;
+                transition:.15s;line-height:1.3;text-align:center">${lbl}</button>`;
+          }).join('');
+          html+=`<div class="fuel-edit-row">
+            <div class="fuel-edit-label">${f}</div>
+            <div style="display:flex;gap:4px">${btns}</div>
+          </div>`;
+        });
+
+        // admin note field
+        const an=getAdminNote(st.name);
+        html+=`<div style="margin-top:10px;display:flex;gap:6px;align-items:center">
+          <input class="inp" style="font-size:12px;padding:7px 10px;flex:1"
+            placeholder="หมายเหตุปั๊มนี้..." id="note-${st.id}" value="${an}"/>
+          <button onclick="adminSaveNote('${st.id}','${st.name}')"
+            style="background:var(--accent);color:#fff;border:none;border-radius:9px;
+              padding:8px 12px;cursor:pointer;font-size:12px;font-weight:700;
+              font-family:'IBM Plex Sans Thai',sans-serif;white-space:nowrap">💾</button>
+        </div>`;
+        card.innerHTML=html;
+        el.appendChild(card);
+      });
+    });
+    return;
+  }
+
+  // TAB 3 — ตั้งค่าโดเนท
+  if(atab===3){
+    el.innerHTML=`
+      <div style="font-size:11px;color:var(--text2);margin-bottom:16px;line-height:1.6">
+        ข้อมูลที่ผู้ใช้เห็นเมื่อกดปุ่ม ☕ โดเนท บันทึกในเครื่องนี้
+      </div>
+      <div class="ig"><label class="il">ชื่อบัญชี / ชื่อผู้รับโดเนท</label>
+        <input class="inp" id="dn-name" placeholder="เช่น นาย ก ข ค" value="${DONATE.name}"/>
+      </div>
+      <div class="ig"><label class="il">ธนาคาร / เลขบัญชี / พร้อมเพย์</label>
+        <input class="inp" id="dn-bank" placeholder="เช่น กสิกรไทย 123-4-56789-0" value="${DONATE.bank}"/>
+      </div>
+      <div class="ig"><label class="il">ข้อความในหน้าโดเนท</label>
+        <textarea class="inp" id="dn-msg" placeholder="ข้อความขอบคุณ...">${DONATE.msg}</textarea>
+      </div>
+      <div class="ig"><label class="il">URL รูป QR Code (ไม่บังคับ)</label>
+        <input class="inp" id="dn-qr" placeholder="https://i.imgur.com/..." value="${DONATE.qr}"/>
+        <div style="font-size:10px;color:var(--text3);margin-top:5px">วางลิงก์รูปจาก Imgur, Google Drive (ลิงก์ direct) หรืออื่นๆ</div>
+      </div>
+      <button class="btn" onclick="adminSaveDonate()" style="margin-bottom:10px">💾 บันทึกข้อมูลโดเนท</button>
+      <button onclick="openDonate()" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border2);
+        background:var(--surface2);color:var(--text2);cursor:pointer;
+        font-family:'IBM Plex Sans Thai',sans-serif;font-size:13px;font-weight:600">👁 ดูตัวอย่าง</button>`;
+  }
+}
+
+// ── admin set fuel ──
+function adminSetFuel(stName,fuel,newStatus){
+  const ts=new Date().toISOString();
+  if(!statusMap[stName])statusMap[stName]={};
+  const prevNote=statusMap[stName][fuel]?.adminNote||'';
+  if(newStatus==='none'){
+    delete statusMap[stName][fuel];
+    approved=approved.filter(r=>!(r.stationName===stName&&r.fuelType===fuel));
+  }else{
+    const rec={id:'adm'+Date.now(),stationName:stName,
+      district:(STATIONS.find(s=>s.name===stName)||{}).district||'',
+      fuelType:fuel,status:newStatus,note:'',adminNote:prevNote,
+      reporter:'แอดมิน',timestamp:ts,approvedAt:ts};
+    approved=approved.filter(r=>!(r.stationName===stName&&r.fuelType===fuel));
+    approved.unshift(rec);
+    statusMap[stName][fuel]={status:newStatus,note:'',adminNote:prevNote,timestamp:ts,reporter:'แอดมิน'};
+  }
+  if(isReal()&&newStatus!=='none'){
+    apiPost({action:'admin_set_status',password:adminPwd,stationName:stName,fuelType:fuel,status:newStatus,timestamp:ts}).catch(()=>{});
+  }
+  renderMap();updateStats();renderAdm();
+  const label=newStatus==='none'?'ล้างข้อมูล':ST[newStatus].label;
+  showToast(`${stName} · ${fuel} → ${label}`);
+}
+
+// ── admin save note ──
+function adminSaveNote(sid,stName){
+  const note=(document.getElementById('note-'+sid)||{}).value||'';
+  approved.forEach(r=>{if(r.stationName===stName)r.adminNote=note;});
+  Object.keys(statusMap[stName]||{}).forEach(f=>{if(statusMap[stName][f])statusMap[stName][f].adminNote=note;});
+  if(isReal())apiPost({action:'admin_save_note',password:adminPwd,stationName:stName,note}).catch(()=>{});
+  renderMap();renderAdm();
+  showToast('บันทึกหมายเหตุแล้ว');
+}
+
+// ── admin save donate ──
+function adminSaveDonate(){
+  DONATE.name=document.getElementById('dn-name').value.trim();
+  DONATE.bank=document.getElementById('dn-bank').value.trim();
+  DONATE.msg =document.getElementById('dn-msg').value.trim();
+  DONATE.qr  =document.getElementById('dn-qr').value.trim();
+  saveDonate();
+  showToast('บันทึกข้อมูลโดเนทแล้ว');
+}
+
+// ══ APPROVE / REJECT / DELETE ══
+async function approveR(id,adminNote){
+  const r=pending.find(x=>x.id===id);if(!r)return;
+  try{
+    if(isReal())await apiPost({action:'approve_report',id,password:adminPwd,adminNote:adminNote||''});
+    approved=[{...r,adminNote:adminNote||'',approvedAt:new Date().toISOString()},...approved];
+    pending=pending.filter(x=>x.id!==id);
+    rebuildStatus();renderAdm();renderMap();updateStats();showToast('อนุมัติแล้ว ✅');
+  }catch(e){showToast(e.message,false);}
+}
+async function rejectR(id){
+  try{
+    if(isReal())await apiPost({action:'reject_report',id,password:adminPwd});
+    pending=pending.filter(x=>x.id!==id);renderAdm();showToast('ลบรายงานแล้ว');
+  }catch(e){showToast(e.message,false);}
+}
+async function deleteA(id){
+  try{
+    if(isReal())await apiPost({action:'delete_approved',id,password:adminPwd});
+    approved=approved.filter(x=>x.id!==id);
+    rebuildStatus();renderAdm();renderMap();updateStats();showToast('ลบแล้ว');
+  }catch(e){showToast(e.message,false);}
+}
+
+// ══ LIST VIEW ══
+function showList(){
+  const el=document.getElementById('listC');el.innerHTML='';
+  STATIONS.forEach(st=>{
+    const ov=bestStatus(st.name),sc=ov?ST[ov]:null;
+    const b=getBrand(st),last=getLastUpdate(st.name);
+    const row=document.createElement('div');row.className='lcard';
+    row.onclick=()=>{closeOv('ovList');MAP&&MAP.flyTo([st.lat,st.lng],15,{duration:1.1});setTimeout(()=>MKR[st.id]&&MKR[st.id].openPopup(),1300);};
+    const lw=document.createElement('div');lw.className='lbrand';lw.style.borderColor=sc?sc.color+'44':'var(--border)';
+    if(b.logo){
+      const img=document.createElement('img');img.src=b.logo;
+      img.onerror=()=>{lw.style.background=b.color;lw.innerHTML=`<span style="font-size:12px;font-weight:700;color:#fff">${b.label}</span>`;};
+      lw.appendChild(img);
+    }else{lw.style.background=b.color;lw.innerHTML=`<span style="font-size:12px;font-weight:700;color:#fff">${b.label}</span>`;}
+    row.appendChild(lw);
+    const info=document.createElement('div');info.style.cssText='flex:1;min-width:0';
+    info.innerHTML=`
+      <div style="font-weight:700;font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.name}</div>
+      <div style="font-size:11px;color:var(--text2)">📍 ${st.district}</div>
+      ${last?`<div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace">${fmtT(last.timestamp)}</div>`:''}`;
+    row.appendChild(info);
+    const badge=document.createElement('span');badge.className='stag';
+    badge.style.cssText=`background:${sc?sc.bg:'var(--surface2)'};color:${sc?sc.color:'var(--text3)'}`;
+    badge.textContent=sc?sc.badge:'—';row.appendChild(badge);
+    el.appendChild(row);
+  });
+  document.getElementById('ovList').classList.add('on');
+}
+
+// ══ NAV / UTIL ══
+function navTo(n){
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('on'));
+  if(n==='map') document.getElementById('ni0').classList.add('on');
+  if(n==='list'){document.getElementById('ni1').classList.add('on');showList();}
+}
+function closeOv(id){document.getElementById(id).classList.remove('on');}
+function showErr(msg){const el=document.getElementById('errBar');el.textContent=msg;el.style.display='block';setTimeout(hideErr,7000);}
+function hideErr(){document.getElementById('errBar').style.display='none';}
+
+// ══ GEOLOCATION ══
+let userMarker=null,userCircle=null;
+function locateMe(){
+  if(!navigator.geolocation){showToast('เบราว์เซอร์ไม่รองรับ GPS',false);return;}
+  const btn=document.getElementById('locBtn');
+  btn.textContent='⏳';btn.classList.add('locating');
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const{latitude:lat,longitude:lng,accuracy}=pos.coords;
+    btn.textContent='📍';btn.classList.remove('locating');
+    if(userMarker)MAP.removeLayer(userMarker);
+    if(userCircle)MAP.removeLayer(userCircle);
+    userCircle=L.circle([lat,lng],{radius:accuracy,color:'#7c6af7',fillColor:'#7c6af7',fillOpacity:.08,weight:1.5}).addTo(MAP);
+    const dotIcon=L.divIcon({className:'',html:'<div class="user-dot"></div>',iconSize:[18,18],iconAnchor:[9,9]});
+    userMarker=L.marker([lat,lng],{icon:dotIcon,zIndexOffset:1000}).addTo(MAP);
+    userMarker.bindPopup(`<div style="font-family:'IBM Plex Sans Thai',sans-serif;padding:8px 4px;color:#0f172a">
+      <b style="font-size:13px">📍 ตำแหน่งของคุณ</b>
+      <div style="font-size:11px;color:#64748b;margin-top:2px">ความแม่นยำ ±${Math.round(accuracy)} เมตร</div>
+    </div>`);
+    MAP.flyTo([lat,lng],14,{duration:1.2});
+    showToast('พบตำแหน่งของคุณแล้ว');
+    let nearest=null,minDist=Infinity;
+    STATIONS.forEach(st=>{const d=MAP.distance([lat,lng],[st.lat,st.lng]);if(d<minDist){minDist=d;nearest=st;}});
+    if(nearest&&minDist<30000)
+      setTimeout(()=>showToast(`ปั๊มใกล้สุด: ${nearest.name} (${(minDist/1000).toFixed(1)} กม.)`),2500);
+  },err=>{
+    btn.textContent='📍';btn.classList.remove('locating');
+    const msgs={1:'ไม่อนุญาตให้เข้าถึง GPS',2:'ไม่พบสัญญาณ GPS',3:'หมดเวลา GPS'};
+    showToast(msgs[err.code]||'เกิดข้อผิดพลาด GPS',false);
+  },{enableHighAccuracy:true,timeout:12000,maximumAge:30000});
+}
+
+// ══ BOOT ══
+function waitL(cb){if(window.L&&typeof L.map==='function')cb();else setTimeout(()=>waitL(cb),30);}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',()=>waitL(boot));
+}else{waitL(boot);}
+
+async function boot(){
+  loadDonate();
+  initMap();renderMap();doRefresh();
+  setInterval(doRefresh,120000);
+  setTimeout(locateMe,800);
+}
+</script>
+</body>
+</html>
