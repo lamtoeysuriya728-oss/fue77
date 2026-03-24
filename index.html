@@ -14,9 +14,11 @@
   --text:#f0f0fa;--text2:#8888aa;--text3:#44445a;
   --accent:#7c6af7;--accent2:#a89dff;
   --green:#22d474;--yellow:#f5b731;--red:#f74444;--blue:#38c8f5;
+  --bnav-h:64px;
+  --sai-bottom:env(safe-area-inset-bottom,0px);
 }
 html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(--text)}
-#wrap{height:100vh;display:flex;flex-direction:column;position:relative}
+#wrap{height:100vh;height:100dvh;display:flex;flex-direction:column;position:relative}
 #map{flex:1;min-height:0;width:100%}
 
 #top{position:absolute;top:0;left:0;right:0;z-index:500;padding:12px 14px 10px;
@@ -38,30 +40,52 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
   transition:all .18s;white-space:nowrap;flex-shrink:0}
 .pl.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 12px rgba(124,106,247,.4)}
 
+/* ── STATS BAR ── */
 #sbar{background:var(--surface);border-top:1px solid var(--border);
-  display:grid;grid-template-columns:repeat(4,1fr);flex-shrink:0}
+  display:grid;grid-template-columns:repeat(4,1fr);flex-shrink:0;position:relative;z-index:10}
 .sc{padding:9px 4px;text-align:center;border-right:1px solid var(--border)}
 .sc:last-child{border-right:none}
 .sn{font-family:'Space Mono',monospace;font-size:17px;font-weight:700;line-height:1}
 .sl{font-size:9px;color:var(--text2);margin-top:3px;font-weight:500;letter-spacing:.3px;text-transform:uppercase}
 
-#bnav{background:var(--surface);border-top:1px solid var(--border);
-  display:flex;align-items:center;flex-shrink:0;height:58px;
-  padding-bottom:env(safe-area-inset-bottom,0px)}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+/* ── BOTTOM NAV — always visible above home indicator ── */
+#bnav{
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  display:flex;align-items:stretch;flex-shrink:0;
+  /* height = nav content + safe area so content stays in --bnav-h zone */
+  min-height:calc(var(--bnav-h) + env(safe-area-inset-bottom,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  position:relative;z-index:20;
+}
+.ni{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:2px;cursor:pointer;border:none;background:none;
-  font-family:'IBM Plex Sans Thai',sans-serif;color:var(--text3);height:100%;transition:color .15s}
+  font-family:'IBM Plex Sans Thai',sans-serif;color:var(--text3);
+  transition:color .15s;padding:0 2px;min-width:0;
+  /* anchor to top so safe-area padding below doesn't push icons down */
+  align-self:flex-start;height:var(--bnav-h);
+}
 .ni.on{color:var(--accent)}
-.ni span{font-size:18px;line-height:1}
-.ni p{font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
-#brep{flex:1.5;display:flex;align-items:center;justify-content:center;
-  border:none;background:none;cursor:pointer;height:100%;padding:0}
-.brep-i{background:linear-gradient(135deg,var(--accent),#4a3fc0);
-  border-radius:20px;padding:8px 14px;display:flex;align-items:center;gap:5px;
-  font-family:'IBM Plex Sans Thai',sans-serif;font-weight:700;font-size:12px;color:white;
-  box-shadow:0 4px 16px rgba(124,106,247,.45);position:relative;top:-9px;
-  border:1px solid rgba(255,255,255,.12)}
+.ni span{font-size:20px;line-height:1;display:block}
+.ni p{font-size:8px;font-weight:600;letter-spacing:.2px;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#brep{
+  flex:1.4;display:flex;align-items:center;justify-content:center;
+  border:none;background:none;cursor:pointer;padding:0 4px;
+  align-self:flex-start;height:var(--bnav-h);
+}
+.brep-i{
+  background:linear-gradient(135deg,var(--accent),#4a3fc0);
+  border-radius:18px;padding:7px 10px;display:flex;align-items:center;gap:4px;
+  font-family:'IBM Plex Sans Thai',sans-serif;font-weight:700;font-size:11px;color:white;
+  box-shadow:0 4px 16px rgba(124,106,247,.45);
+  /* lifted effect: margin-top instead of negative position so it doesn't clip */
+  margin-top:-10px;
+  border:1px solid rgba(255,255,255,.12);white-space:nowrap;
+}
 
+/* ── OVERLAYS ── */
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;
   align-items:flex-end;backdrop-filter:blur(2px)}
 .ov.on{display:flex}
@@ -119,7 +143,7 @@ select.inp option{background:var(--surface2)}
 .sbtn{padding:12px 4px;border-radius:10px;border:1.5px solid var(--border2);
   background:var(--bg);cursor:pointer;text-align:center;transition:.2s}
 
-#toast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%) translateY(16px);
+#toast{position:fixed;bottom:calc(var(--bnav-h) + env(safe-area-inset-bottom,0px) + 22px);left:50%;transform:translateX(-50%) translateY(16px);
   background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:30px;
   font-size:13px;font-weight:600;z-index:9000;opacity:0;transition:.3s;
   pointer-events:none;white-space:nowrap;border:1px solid var(--border2);
@@ -175,7 +199,8 @@ select.inp option{background:var(--surface2)}
 .leaflet-control-zoom{border:1px solid var(--border)!important;border-radius:10px!important;overflow:hidden}
 .leaflet-control-zoom a{background:var(--surface2)!important;color:var(--text)!important;border-bottom:1px solid var(--border)!important}
 .leaflet-control-zoom a:hover{background:var(--border2)!important}
-#locBtn{position:absolute;bottom:130px;right:12px;z-index:500;
+
+#locBtn{position:absolute;bottom:calc(var(--bnav-h) + env(safe-area-inset-bottom,0px) + 80px);right:12px;z-index:500;
   width:40px;height:40px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);
   display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;
   box-shadow:0 3px 12px rgba(0,0,0,.4);transition:.15s}
@@ -235,9 +260,9 @@ select.inp option{background:var(--surface2)}
     <button class="ni on" id="ni0" onclick="navTo('map')"><span>🗺️</span><p>แผนที่</p></button>
     <button class="ni" id="ni1" onclick="navTo('list')"><span>📋</span><p>รายการ</p></button>
     <button id="brep" onclick="openRep(null)">
-      <div class="brep-i"><span style="font-size:16px">📢</span><span>รายงาน</span></div>
+      <div class="brep-i"><span style="font-size:15px">📢</span><span>รายงาน</span></div>
     </button>
-    <button class="ni" onclick="openDonate()"><span>☕</span><p>สนันสนุนค่าเชิฟเวอร์</p></button>
+    <button class="ni" onclick="openDonate()"><span>☕</span><p>สนับสนุน</p></button>
     <button class="ni" id="ni3" onclick="openAdm()"><span id="adico">🔐</span><p>แอดมิน</p></button>
   </div>
 </div>
@@ -312,28 +337,38 @@ select.inp option{background:var(--surface2)}
 const GAS_URL   = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
 const ADMIN_PWD = 'fuel2024';
 
-// ══ DONATE INFO (ฝังในโค้ดเลย ไม่ใช้ localStorage) ══
+// ══ DONATE INFO ══
 const DONATE = {
-  name: 'สุภร  อนุสุริยา',
-  bank: 'ธนาคารกรุงศรี / เลขบัญชี  0221756840',
-  msg:  '☕ ขอบคุณที่ช่วยสนับสนุน!\nทุกยอดช่วยค่าเซิร์ฟเวอร์ได้มาก 🙏',
-  qr:   'https://img1.pic.in.th/images/107844_0.md.jpg',
+  name:    'สุภร  อนุสุริยา',
+  bank:    'ธนาคารกรุงศรี',
+  account: '022-1-75684-0',
+  accountRaw: '0221756840',
+  msg:     '☕ ขอบคุณที่ช่วยสนับสนุน!\nทุกยอดช่วยค่าเซิร์ฟเวอร์ได้มาก 🙏',
+  qr:      'https://img1.pic.in.th/images/107844_0.md.jpg',
 };
 
 // ══ STATIONS ══
 const STATIONS = [
-  {id:'s01',brand:'PTT',name:'ปตท. เขมราฐ',        district:'เขมราฐ',      lat:16.039768,lng:105.223254},
-  {id:'s02',brand:'PT', name:'PT เขมราฐ',           district:'เขมราฐ',      lat:16.021422,lng:105.227206},
-  {id:'s03',brand:'BJ', name:'บางจาก เขมราฐ',       district:'เขมราฐ',      lat:16.038160,lng:105.217532},
-  {id:'s04',brand:'PTT',name:'ปตท. นาตาล',          district:'นาตาล',       lat:15.900194,lng:105.284962},
-  {id:'s05',brand:'PT', name:'PT นาตาล',            district:'นาตาล',       lat:15.900713,lng:105.283836},
-  {id:'s06',brand:'PTT',name:'ปตท. ตระการพืชผล 1', district:'ตระการพืชผล', lat:15.591216,lng:105.018744},
-  {id:'s07',brand:'PTT',name:'ปตท. ตระการพืชผล 2', district:'ตระการพืชผล', lat:15.620009,lng:105.029060},
-  {id:'s08',brand:'PT', name:'PT ตระการพืชผล',      district:'ตระการพืชผล', lat:15.610887,lng:105.027106},
-  {id:'s09',brand:'BJ', name:'บางจาก ตระการพืชผล', district:'ตระการพืชผล', lat:15.616067,lng:105.027085},
-  {id:'s10',brand:'PTT',name:'ปตท. โพธิ์ไทร',       district:'โพธิ์ไทร',    lat:15.813011,lng:105.241505},
-  {id:'s11',brand:'PT', name:'PT โพธิ์ไทร',         district:'โพธิ์ไทร',    lat:15.814719,lng:105.244803},
-  {id:'s12',brand:'BJ', name:'บางจาก โพธิ์ไทร',     district:'โพธิ์ไทร',    lat:15.822390,lng:105.249777},
+  // เขมราฐ
+  {id:'s01',brand:'PTT',name:'ปตท. เขมราฐ',          district:'เขมราฐ',      lat:16.039768,lng:105.223254},
+  {id:'s02',brand:'PT', name:'PT เขมราฐ',             district:'เขมราฐ',      lat:16.021422,lng:105.227206},
+  {id:'s03',brand:'BJ', name:'บางจาก เขมราฐ',         district:'เขมราฐ',      lat:16.038160,lng:105.217532},
+  // นาตาล
+  {id:'s04',brand:'PTT',name:'ปตท. นาตาล',            district:'นาตาล',       lat:15.900194,lng:105.284962},
+  {id:'s05',brand:'PT', name:'PT นาตาล',              district:'นาตาล',       lat:15.900713,lng:105.283836},
+  // ตระการพืชผล
+  {id:'s06',brand:'PTT',name:'ปตท. ตระการพืชผล 1',   district:'ตระการพืชผล', lat:15.591216,lng:105.018744},
+  {id:'s07',brand:'PTT',name:'ปตท. ตระการพืชผล 2',   district:'ตระการพืชผล', lat:15.620009,lng:105.029060},
+  {id:'s08',brand:'PT', name:'PT ตระการพืชผล',        district:'ตระการพืชผล', lat:15.610887,lng:105.027106},
+  {id:'s09',brand:'BJ', name:'บางจาก ตระการพืชผล',   district:'ตระการพืชผล', lat:15.616067,lng:105.027085},
+  // โพธิ์ไทร
+  {id:'s10',brand:'PTT',name:'ปตท. โพธิ์ไทร',         district:'โพธิ์ไทร',    lat:15.813011,lng:105.241505},
+  {id:'s11',brand:'PT', name:'PT โพธิ์ไทร',           district:'โพธิ์ไทร',    lat:15.814719,lng:105.244803},
+  {id:'s12',brand:'BJ', name:'บางจาก โพธิ์ไทร',       district:'โพธิ์ไทร',    lat:15.822390,lng:105.249777},
+  // ปั้มใหม่ที่เพิ่ม
+  {id:'s13',brand:'PT', name:'PT หัวนา',              district:'เขมราฐ',      lat:15.9078282,lng:105.2019191},
+  {id:'s14',brand:'PT', name:'PT บ้านคอนสาย',         district:'ตระการพืชผล', lat:15.6890385,lng:105.077376},
+  {id:'s15',brand:'PT', name:'PT บ้านหัวสะพาน',       district:'โพธิ์ไทร',    lat:15.7088281,lng:105.0842425},
 ];
 
 const BRAND_CFG={
@@ -544,17 +579,84 @@ function setF(f){
 // ══ DONATE ══
 function openDonate(){
   document.getElementById('donateView').innerHTML=`
-    <div class="donate-qr-box">
-      <img src="${DONATE.qr}" alt="QR PromptPay"
-        onerror="this.parentNode.innerHTML='<div style=\\'font-size:48px\\'>📷</div>'"/>
+    <div style="position:relative;width:fit-content;margin:0 auto 16px">
+      <div class="donate-qr-box" id="qrBox">
+        <img id="qrImg" src="${DONATE.qr}" alt="QR PromptPay" crossorigin="anonymous"
+          onerror="this.parentNode.innerHTML='<div style=\\'font-size:48px\\'>📷</div>'"/>
+      </div>
+      <button onclick="saveQR()" title="บันทึกรูป QR"
+        style="position:absolute;top:8px;right:8px;background:rgba(9,9,15,.75);
+          border:1px solid var(--border2);border-radius:8px;padding:5px 9px;cursor:pointer;
+          font-size:12px;font-weight:700;color:var(--text2);backdrop-filter:blur(4px)">
+        💾 บันทึก QR
+      </button>
     </div>
     <div class="donate-name">${DONATE.name}</div>
-    <div class="donate-bank">${DONATE.bank}</div>
+
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+      <!-- ธนาคาร -->
+      <div style="display:flex;align-items:center;justify-content:space-between;
+        background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:10px 13px">
+        <div>
+          <div style="font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.4px;text-transform:uppercase;margin-bottom:2px">ธนาคาร</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text)">${DONATE.bank}</div>
+        </div>
+        <span style="font-size:18px">🏦</span>
+      </div>
+      <!-- เลขบัญชี -->
+      <div style="display:flex;align-items:center;justify-content:space-between;
+        background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:10px 13px">
+        <div>
+          <div style="font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.4px;text-transform:uppercase;margin-bottom:2px">เลขบัญชี</div>
+          <div style="font-size:17px;font-weight:700;color:var(--accent2);font-family:'Space Mono',monospace;letter-spacing:1px">${DONATE.account}</div>
+        </div>
+        <button onclick="copyAcct()" id="copyBtn"
+          style="background:var(--accent);color:#fff;border:none;border-radius:8px;
+            padding:7px 12px;cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;
+            font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:10px">
+          📋 คัดลอก
+        </button>
+      </div>
+    </div>
+
     <div class="donate-msg">${DONATE.msg}</div>
     <button onclick="closeOv('ovDonate')" style="width:100%;padding:11px;border-radius:10px;
       border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
       cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;font-weight:600">ปิด</button>`;
   document.getElementById('ovDonate').classList.add('on');
+}
+
+function copyAcct(){
+  navigator.clipboard.writeText(DONATE.accountRaw).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    if(btn){btn.textContent='✅ คัดลอกแล้ว';btn.style.background='var(--green)';btn.style.color='#000';}
+    showToast('คัดลอกเลขบัญชีแล้ว');
+    setTimeout(()=>{if(btn){btn.textContent='📋 คัดลอก';btn.style.background='var(--accent)';btn.style.color='#fff';}},2500);
+  }).catch(()=>{
+    // fallback for older browsers
+    const ta=document.createElement('textarea');
+    ta.value=DONATE.accountRaw;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);showToast('คัดลอกเลขบัญชีแล้ว');
+  });
+}
+
+function saveQR(){
+  const img=document.getElementById('qrImg');
+  if(!img||!img.complete){showToast('รูปยังโหลดไม่เสร็จ',false);return;}
+  try{
+    const c=document.createElement('canvas');
+    c.width=img.naturalWidth||300;c.height=img.naturalHeight||300;
+    c.getContext('2d').drawImage(img,0,0);
+    const a=document.createElement('a');
+    a.href=c.toDataURL('image/png');
+    a.download='promptpay-qr.png';a.click();
+    showToast('บันทึก QR Code แล้ว');
+  }catch(e){
+    // crossorigin issue — open in new tab instead
+    window.open(DONATE.qr,'_blank');
+    showToast('เปิดรูป QR ในแท็บใหม่แล้ว');
+  }
 }
 
 // ══ REPORT ══
