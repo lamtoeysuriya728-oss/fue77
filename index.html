@@ -40,6 +40,7 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
   transition:all .18s;white-space:nowrap;flex-shrink:0}
 .pl.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 12px rgba(124,106,247,.4)}
 
+/* ── STATS BAR ── */
 #sbar{background:var(--surface);border-top:1px solid var(--border);
   display:grid;grid-template-columns:repeat(4,1fr);flex-shrink:0;position:relative;z-index:10}
 .sc{padding:9px 4px;text-align:center;border-right:1px solid var(--border)}
@@ -47,6 +48,7 @@ html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans Thai',sans-seri
 .sn{font-family:'Space Mono',monospace;font-size:17px;font-weight:700;line-height:1}
 .sl{font-size:9px;color:var(--text2);margin-top:3px;font-weight:500;letter-spacing:.3px;text-transform:uppercase}
 
+/* ── BOTTOM NAV ── */
 #bnav{
   background:var(--surface);
   border-top:1px solid var(--border);
@@ -155,6 +157,7 @@ select.inp option{background:var(--surface2)}
 .stag{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;
   letter-spacing:.3px;text-transform:uppercase;flex-shrink:0}
 
+/* donate */
 .donate-qr-box{width:200px;height:200px;border-radius:18px;background:white;
   display:flex;align-items:center;justify-content:center;
   margin:0 auto 16px;overflow:hidden;border:3px solid var(--border2);
@@ -206,6 +209,7 @@ select.inp option{background:var(--surface2)}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(124,106,247,.3),0 3px 10px rgba(0,0,0,.5)}
   50%{box-shadow:0 0 0 8px rgba(124,106,247,.1),0 3px 10px rgba(0,0,0,.5)}}
 
+/* ── saving indicator ── */
 .saving-dot{display:inline-block;width:8px;height:8px;border-radius:50%;
   background:var(--yellow);margin-right:5px;animation:blink 1s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
@@ -277,6 +281,7 @@ select.inp option{background:var(--surface2)}
   </div>
 </div>
 
+<!-- REPORT SHEET -->
 <div class="ov" id="ovRep" onclick="closeOv('ovRep')">
   <div class="sh" onclick="event.stopPropagation()">
     <div class="hdl"></div>
@@ -284,6 +289,7 @@ select.inp option{background:var(--surface2)}
   </div>
 </div>
 
+<!-- LOGIN SHEET -->
 <div class="ov" id="ovLog" onclick="closeOv('ovLog')">
   <div class="sh" onclick="event.stopPropagation()" style="max-height:52vh">
     <div class="hdl"></div>
@@ -298,6 +304,7 @@ select.inp option{background:var(--surface2)}
   </div>
 </div>
 
+<!-- ADMIN SHEET -->
 <div class="ov" id="ovAdm" onclick="closeOv('ovAdm')">
   <div class="sh" onclick="event.stopPropagation()">
     <div class="hdl"></div>
@@ -317,6 +324,7 @@ select.inp option{background:var(--surface2)}
   </div>
 </div>
 
+<!-- LIST SHEET -->
 <div class="ov" id="ovList" onclick="closeOv('ovList')">
   <div class="sh" onclick="event.stopPropagation()">
     <div class="hdl"></div>
@@ -327,11 +335,11 @@ select.inp option{background:var(--surface2)}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
+// ══ CONFIG ══
+const GAS_URL   = 'https://script.google.com/macros/s/AKfycbxNpIVQ8GSiDtP7YYyEuzjsJfX7tbftw4ezM4G4F4W2z0-Wcxt__Fcw9_oDdwpfyAJS/exec';
+const ADMIN_PWD = 'fuel2024';
 
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxNpIVQ8GSiDtP7YYyEuzjsJfX7tbftw4ezM4G4F4W2z0-Wcxt__Fcw9_oDdwpfyAJS/exec';
-var _0x3fa2=['0x1a','0x2b'];
-(function(_0xabc...){...})();
-
+// ══ DONATE INFO ══
 const DONATE = {
   name:    'สุภร  อนุสุริยา',
   bank:    'ธนาคารกรุงศรี',
@@ -341,6 +349,7 @@ const DONATE = {
   qr:      'https://img1.pic.in.th/images/107844_0.md.jpg',
 };
 
+// ══ STATIONS ══
 const STATIONS = [
   // เขมราฐ
   {id:'s01',brand:'PTT',name:'ปตท. เขมราฐ',          district:'เขมราฐ',      lat:16.039768,lng:105.223254},
@@ -386,6 +395,7 @@ let MAP=null,MKR={},POP={};
 const isReal=()=>GAS_URL!=='YOUR_APPS_SCRIPT_WEB_APP_URL';
 const getBrand=st=>BRAND_CFG[st.brand]||{color:'#555',label:'⛽',logo:''};
 
+// ══ HELPERS ══
 function fmtT(ts){
   if(!ts)return'';
   const d=Math.floor((Date.now()-new Date(ts))/60000);
@@ -416,6 +426,7 @@ function showToast(msg,ok=true){
   el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200);
 }
 
+// ══ STATUS MAP ══
 function rebuildStatus(){
   Object.keys(statusMap).forEach(k=>delete statusMap[k]);
   approved.forEach(r=>{
@@ -430,6 +441,7 @@ function rebuildStatus(){
   });
 }
 
+// ══ API ══
 async function apiGet(action){
   const res=await fetch(GAS_URL+'?action='+encodeURIComponent(action),{redirect:'follow'});
   const json=await res.json();
@@ -444,6 +456,7 @@ async function apiPost(body){
   return json.data;
 }
 
+// ══ REFRESH ══
 async function doRefresh(){
   if(!isReal()){renderMap();updateStats();return;}
   try{
@@ -459,6 +472,7 @@ async function doRefresh(){
   }catch(e){showErr('⚠️ '+e.message);renderMap();updateStats();}
 }
 
+// ══ MAP ══
 function makePin(st){
   const ov=bestStatus(st.name);
   const ring=ov?ST[ov].color:'#2e2e48';
@@ -538,6 +552,7 @@ function initMap(){
   setTimeout(()=>MAP.invalidateSize(),120);
 }
 
+// ══ STATS ══
 function updateStats(){
   let av=0,em=0;
   STATIONS.forEach(s=>{const ov=bestStatus(s.name);if(ov==='available'||ov==='limited')av++;if(ov==='empty')em++;});
@@ -547,6 +562,7 @@ function updateStats(){
   document.getElementById('st3').textContent=td;
 }
 
+// ══ FILTER ══
 function setF(f){
   filter=f;
   document.querySelectorAll('.pl').forEach(b=>{
@@ -562,6 +578,7 @@ function setF(f){
   renderMap();
 }
 
+// ══ DONATE ══
 function openDonate(){
   document.getElementById('donateView').innerHTML=`
     <div style="position:relative;width:fit-content;margin:0 auto 16px">
@@ -640,6 +657,7 @@ function saveQR(){
   }
 }
 
+// ══ REPORT ══
 let RF={stationId:'',fuelType:'ดีเซล',status:'available',note:'',reporter:''};
 function openRep(sid){
   RF={stationId:sid||'',fuelType:'ดีเซล',status:'available',note:'',reporter:''};
@@ -708,6 +726,7 @@ async function doRep(){
   }
 }
 
+// ══ ADMIN ══
 function openAdm(){
   if(isAdmin){document.getElementById('ovAdm').classList.add('on');renderAdm();}
   else document.getElementById('ovLog').classList.add('on');
@@ -732,7 +751,7 @@ function setATab(n){
 }
 
 function renderAdm(){
-
+  // อัปเดต badge จำนวนรอตรวจ — ใช้ innerHTML ของ span แทน outerHTML เพื่อไม่ทำลาย element
   const pbdg=document.getElementById('pbdg');
   if(pbdg) pbdg.innerHTML=pending.length>0
     ?`<span style="background:var(--red);color:white;border-radius:50%;padding:0 5px;font-size:9px;margin-left:2px">${pending.length}</span>`:'';
@@ -852,6 +871,7 @@ function renderAdm(){
   }
 }
 
+// ══ ADMIN SET FUEL — แก้ไขสถานะและซิงค์ไปยัง backend ══
 async function adminSetFuel(stName,fuel,newStatus){
   const ts=new Date().toISOString();
   const st=STATIONS.find(s=>s.name===stName)||{};
@@ -881,10 +901,12 @@ async function adminSetFuel(stName,fuel,newStatus){
     statusMap[stName][fuel]={status:newStatus,note:'',adminNote:prevNote,timestamp:ts,reporter:'แอดมิน'};
   }
 
+  // อัปเดต UI ทันที
   renderMap();
   updateStats();
-  renderAdm(); 
+  renderAdm(); // re-render แผง admin เพื่ออัปเดตปุ่มสี
 
+  // ซิงค์ไปยัง Apps Script
   if(isReal()){
     try{
       await apiPost({
@@ -905,6 +927,7 @@ async function adminSetFuel(stName,fuel,newStatus){
   }
 }
 
+// ══ ADMIN SAVE NOTE — บันทึกหมายเหตุและซิงค์ ══
 async function adminSaveNote(sid,stName){
   const note=(document.getElementById('note-'+sid)||{}).value||'';
 
@@ -929,6 +952,7 @@ async function adminSaveNote(sid,stName){
   }
 }
 
+// ══ APPROVE / REJECT / DELETE ══
 async function approveR(id,adminNote){
   const r=pending.find(x=>x.id===id);if(!r)return;
   try{
@@ -952,6 +976,7 @@ async function deleteA(id){
   }catch(e){showToast(e.message,false);}
 }
 
+// ══ LIST VIEW ══
 function showList(){
   const el=document.getElementById('listC');el.innerHTML='';
   STATIONS.forEach(st=>{
@@ -980,6 +1005,7 @@ function showList(){
   document.getElementById('ovList').classList.add('on');
 }
 
+// ══ NAV / UTIL ══
 function navTo(n){
   document.querySelectorAll('.ni').forEach(b=>b.classList.remove('on'));
   if(n==='map') document.getElementById('ni0').classList.add('on');
@@ -989,6 +1015,7 @@ function closeOv(id){document.getElementById(id).classList.remove('on');}
 function showErr(msg){const el=document.getElementById('errBar');el.textContent=msg;el.style.display='block';setTimeout(hideErr,7000);}
 function hideErr(){document.getElementById('errBar').style.display='none';}
 
+// ══ GEOLOCATION ══
 let userMarker=null,userCircle=null;
 function locateMe(){
   if(!navigator.geolocation){showToast('เบราว์เซอร์ไม่รองรับ GPS',false);return;}
